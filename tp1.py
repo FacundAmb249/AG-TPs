@@ -31,13 +31,26 @@ def crossover (padre1, padre2):
     print(f"numero aleatorio {num} y probalidad_crossover {probabilidad_crossover*100}" )
     return hijo1, hijo2
 
-def mutacion (hijo): #esta mal la mutacion, se debia tomar un subconjunto de los genes y voltearlo
+def mutacion (hijo): #No se si los punto donde se hace la mutacion son correctos para el caso que el punto1 sea igual al comienzo (posicion 0) y punto2 sea igual al final (posicion 5)
     num = random.randrange(0,100)
     print(f"numero aleatorio {num} y probabilidad_mutacion {probabilidad_mutacion*100}" )
     if num < (probabilidad_mutacion*100):
-        punto_mutacion = random.randint(0,cant_genes-1)
-        hijo[punto_mutacion] = 1 - hijo[punto_mutacion]
+        # punto_mutacion = random.randint(0,cant_genes-1)
+        # hijo[punto_mutacion] = 1 - hijo[punto_mutacion]
+        punto1 = random.randint(0,cant_genes-1)
+        punto2 = random.randint(0,cant_genes-1)
+        #si los puntos son iguales o consecutivos se vuelve a buscar, ya que sino el cromosoma queda igual
+        if punto1 == punto2 or abs(punto1 - punto2) == 1: 
+            punto1 = random.randint(0,cant_genes-1)
+            punto2 = random.randint(0,cant_genes-1)
+        print(f"punto1 {punto1} y punto2 {punto2}")
+        if punto1 > punto2:
+            punto1, punto2 = punto2, punto1
+            print(f"hijo sin modificar {hijo} para cuando punto1 > punto2 se invierte el valor de cada uno")
+        hijo = hijo[:punto1] + hijo[punto1:punto2][::-1] + hijo[punto2:]
+        print(f"hijo {hijo} para cuando punto1 < punto2")
     return hijo
+
 
 # prueba = bin(2**30-1)
 # print(prueba)
