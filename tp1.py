@@ -61,6 +61,8 @@ cant_poblacion = 4 #puse 4 y no 10 para que sea mas facil de ver y verificar que
 cant_genes = len(bin(2**30-1))-2
 probabilidad_crossover = 0.75
 probabilidad_mutacion = 0.05
+maxiteraciones = 200
+iteraciones =0
 poblacion = []
 cromosoma = []
 valores = []
@@ -68,54 +70,71 @@ datos_poblacionales = []
 datos_valores = []
 valores_funcion = []
 poblacion2= []
+probabilidad_seleccion = []
 
 #creacion de la poblacion
 crear_poblacion(cant_poblacion, cant_genes)
 print("poblacion inicial:")
 print(poblacion)
 
-#pasar valores de binario a decimal, usarlo en la funcion y guardar los valores incluyendo los max, min y promedio antes y luego de la funcion
+while iteraciones < maxiteraciones:
+    print("-------------------------------------------------------------------------------------------------")
+    print("poblacion inicial:")
+    print(poblacion)
+    #pasar valores de binario a decimal, usarlo en la funcion y guardar los valores incluyendo los max, min y promedio antes y luego de la funcion
+    for i in range(cant_poblacion):
+        valores.append(bin_to_dec(poblacion[i]))
+        valores_funcion.append((bin_to_dec(poblacion[i])/(2**30-1))**2)
+    print("valores antes de la funcion:")
+    print(valores)
+    print("valores despues de la funcion:")
+    print(valores_funcion)
+    datos_poblacionales.append([max(valores),min(valores),sum(valores)/cant_poblacion])
+    datos_valores.append([max(valores_funcion),min(valores_funcion),sum(valores_funcion)/cant_poblacion])
+    print("datos max, min y promedio antes de la funcion:")
+    print(datos_poblacionales)
+    print("datos max, min y promedio despues de la funcion:")
+    print(datos_valores)
+    print(f"la cantidad de poblacion es: {cant_poblacion}")
+    #calcular la probabilidad de seleccion de cada una de los cromosomas
+    for i in range(cant_poblacion):
+        probabilidad_seleccion.append(valores_funcion[i]/sum(valores_funcion))
+        print(f"probabilidad de seleccion del cromosoma {i}: {probabilidad_seleccion[i]}")
+    print("probabilidad de seleccion:")
+    print(probabilidad_seleccion)
+
+    #ruleta
+    #print(random.choices(poblacion, probabilidad_seleccion, k=1))
+    #el primer valor son los cromosomas para elegir y el segundo para la probabilidad de eleccion correspondiente con los cromosomas
+    #el [0] es para que no me devuelva una lista. el k=1 es para que me devuelva un solo valor.
+
+    for i in range(cant_poblacion//2): #hay que preguntar si esta bien el //2 y que la cantidad de poblacion sea par. Pues si el numero es impar la cantidad de la poblacion disminuye en 2
+        padre1 = random.choices(poblacion, probabilidad_seleccion, k=1)[0]
+        padre2 = random.choices(poblacion, probabilidad_seleccion, k=1)[0]
+        hijo1, hijo2 = crossover(padre1, padre2)
+        hijo1 = mutacion(hijo1)
+        hijo2 = mutacion(hijo2)
+        poblacion2.append(hijo1)
+        poblacion2.append(hijo2)
+        print("padres:")
+        print(padre1)
+        print(padre2)
+        print("hijos:")
+        print(hijo1)
+        print(hijo2)
+    poblacion.clear()
+    poblacion = poblacion2[:]
+    poblacion2.clear()
+    valores.clear()
+    valores_funcion.clear()
+    probabilidad_seleccion.clear()
+    print("resultado final:")
+    print(poblacion)
+    iteraciones += 1
+print("-------------------------------------------------------------------------------------------------")
+print("poblacion final en numero:")
 for i in range(cant_poblacion):
-    valores.append(bin_to_dec(poblacion[i]))
-    valores_funcion.append((bin_to_dec(poblacion[i])/(2**30-1))**2)
-print("valores antes de la funcion:")
-print(valores)
-print("valores despues de la funcion:")
-print(valores_funcion)
-datos_poblacionales.append([max(valores),min(valores),sum(valores)/cant_poblacion])
-datos_valores.append([max(valores_funcion),min(valores_funcion),sum(valores_funcion)/cant_poblacion])
-print("datos max, min y promedio antes de la funcion:")
-print(datos_poblacionales)
-print("datos max, min y promedio despues de la funcion:")
-print(datos_valores)
-
-#calcular la probabilidad de seleccion de cada una de los cromosomas
-probabilidad_seleccion = []
+    print(bin_to_dec(poblacion[i]))
+print("poblacion final despues de la funcion:")
 for i in range(cant_poblacion):
-    probabilidad_seleccion.append(valores_funcion[i]/sum(valores_funcion))
-print("probabilidad de seleccion:")
-print(probabilidad_seleccion)
-
-#ruleta
-#print(random.choices(poblacion, probabilidad_seleccion, k=1))
-#el primer valor son los cromosomas para elegir y el segundo para la probabilidad de eleccion correspondiente con los cromosomas
-#el [0] es para que no me devuelva una lista. el k=1 es para que me devuelva un solo valor.
-
-for i in range(cant_poblacion//2): #hay que preguntar si esta bien el //2 y que la cantidad de poblacion sea par. Pues si el numero es impar la cantidad de la poblacion disminuye en 2
-    padre1 = random.choices(poblacion, probabilidad_seleccion, k=1)[0]
-    padre2 = random.choices(poblacion, probabilidad_seleccion, k=1)[0]
-    hijo1, hijo2 = crossover(padre1, padre2)
-    hijo1 = mutacion(hijo1)
-    hijo2 = mutacion(hijo2)
-    poblacion2.append(hijo1)
-    poblacion2.append(hijo2)
-    print("padres:")
-    print(padre1)
-    print(padre2)
-    print("hijos:")
-    print(hijo1)
-    print(hijo2)
-
-poblacion = poblacion2
-print("resultado final:")
-print(poblacion)
+    print((bin_to_dec(poblacion[i])/(2**30-1))**2)
