@@ -1,6 +1,9 @@
 #Falta corregir el metodo de mutacion y que se ejecute varias veces (ademas de hacer mas legible el codigo)
 
 import random
+import matplotlib.pyplot as plt
+import pandas as pd
+pd.set_option('display.max_rows', None)
 
 def bin_to_dec(cromosoma):
     dec = 0
@@ -138,3 +141,52 @@ for i in range(cant_poblacion):
 print("poblacion final despues de la funcion:")
 for i in range(cant_poblacion):
     print((bin_to_dec(poblacion[i])/(2**30-1))**2)
+print("cromosoma con valor maximo:")
+print(max(datos_poblacionales, key=lambda x: x[0])[0])  # Select the maximum value of the first element in each subset (by gpt por no saber como hacerlo xd)
+
+# Crear un DataFrame(tabla) con los datos de la población
+Columnas = ['Maximos', 'Minimos', 'Promedios']
+df = pd.DataFrame(datos_poblacionales, columns=Columnas,index=list(range(1,maxiteraciones+1)))
+print(df)
+
+# Crear los graficos de los datos
+ejex= list(range(maxiteraciones))
+valores_maximos=[]
+for i in range(maxiteraciones):
+    valores_maximos.append(datos_valores[i][0])
+poblacion_maximos=[]
+for i in range(maxiteraciones):
+    poblacion_maximos.append(datos_poblacionales[i][0])
+
+valores_minimos=[]
+for i in range(maxiteraciones):
+    valores_minimos.append(datos_valores[i][1])
+poblacion_minimos=[]
+for i in range(maxiteraciones):
+    poblacion_minimos.append(datos_poblacionales[i][1])
+
+valores_promedios=[]
+for i in range(maxiteraciones):
+    valores_promedios.append(datos_valores[i][2])
+poblacion_promedios=[]
+for i in range(maxiteraciones):
+    poblacion_promedios.append(datos_poblacionales[i][2])
+
+# Primera gráfica
+plt.figure(1)
+plt.plot(ejex, valores_maximos,label='valores maximos')
+plt.plot(ejex, valores_minimos,label='valores minimos')
+plt.plot(ejex, valores_promedios,label='valores promedios')
+plt.title('Valores maximo, minimo y prom de la funcion en cada iteracion')
+plt.legend()
+
+# Segunda gráfica
+plt.figure(2)
+plt.plot(ejex, poblacion_maximos,label='poblacion maximos')
+plt.plot(ejex, poblacion_minimos,label='poblacion minimos')
+plt.plot(ejex, poblacion_promedios,label='poblacion promedios')
+plt.title('valores maximo, minimo y prom de los cromosomas en cada iteracion')
+plt.legend()
+
+plt.show()  # Muestra la segunda gráfica y luego la cierra
+
