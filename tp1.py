@@ -60,8 +60,8 @@ def mutacion (hijo): #No se si los punto donde se hace la mutacion son correctos
 # print(len(prueba)-2) este me da el largo del numero binario
 
 #variable inciales
-cant_poblacion = 4 #puse 4 y no 10 para que sea mas facil de ver y verificar que todo ande bien
-cant_genes = len(bin(2**30-1))-2
+cant_poblacion = 10 #puse 4 y no 10 para que sea mas facil de ver y verificar que todo ande bien
+cant_genes = len(bin(2**30-1))-2 #-2 para quitarle el 0b al principio
 probabilidad_crossover = 0.75
 probabilidad_mutacion = 0.05
 maxiteraciones = 200
@@ -111,7 +111,15 @@ while iteraciones < maxiteraciones:
     #el primer valor son los cromosomas para elegir y el segundo para la probabilidad de eleccion correspondiente con los cromosomas
     #el [0] es para que no me devuelva una lista. el k=1 es para que me devuelva un solo valor.
 
-    for i in range(cant_poblacion//2): #hay que preguntar si esta bien el //2 y que la cantidad de poblacion sea par. Pues si el numero es impar la cantidad de la poblacion disminuye en 2
+    #elitismo
+    #seleccionar los dos mejores cromosomas y pasarlos a la siguiente generacion
+    #Considero como mejor cromosoma a los 2 de mayor valor y modifico el rango par que se reste 1 repeticion y haya solo 4 cromosomas
+    hijo1 = sorted(poblacion, reverse=True)[0]
+    hijo2 = sorted(poblacion, reverse=True)[1]
+    poblacion2.append(hijo1)
+    poblacion2.append(hijo2)
+
+    for i in range((cant_poblacion//2) -1): #hay que preguntar si esta bien el //2 y que la cantidad de poblacion sea par. Pues si el numero es impar la cantidad de la poblacion disminuye en 2
         padre1 = random.choices(poblacion, probabilidad_seleccion, k=1)[0]
         padre2 = random.choices(poblacion, probabilidad_seleccion, k=1)[0]
         hijo1, hijo2 = crossover(padre1, padre2)
