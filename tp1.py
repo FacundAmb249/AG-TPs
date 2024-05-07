@@ -73,7 +73,7 @@ datos_poblacionales = []
 datos_valores = []
 valores_funcion = []
 poblacion2= []
-probabilidad_seleccion = []
+probabilidad_seleccion = [] #aplicar fitness
 
 #creacion de la poblacion
 crear_poblacion(cant_poblacion, cant_genes)
@@ -99,7 +99,7 @@ while iteraciones < maxiteraciones:
     print("datos max, min y promedio despues de la funcion:")
     print(datos_valores)
     print(f"la cantidad de poblacion es: {cant_poblacion}")
-    #calcular la probabilidad de seleccion de cada una de los cromosomas
+    #calcular el fitness de cada una de los cromosomas
     for i in range(cant_poblacion):
         probabilidad_seleccion.append(valores_funcion[i]/sum(valores_funcion))
         print(f"probabilidad de seleccion del cromosoma {i}: {probabilidad_seleccion[i]}")
@@ -114,12 +114,9 @@ while iteraciones < maxiteraciones:
     #elitismo
     #seleccionar los dos mejores cromosomas y pasarlos a la siguiente generacion
     #Considero como mejor cromosoma a los 2 de mayor valor y modifico el rango par que se reste 1 repeticion y haya solo 4 cromosomas
-    hijo1 = sorted(poblacion, reverse=True)[0]
-    hijo2 = sorted(poblacion, reverse=True)[1]
-    poblacion2.append(hijo1)
-    poblacion2.append(hijo2)
 
-    for i in range((cant_poblacion//2) -1): #hay que preguntar si esta bien el //2 y que la cantidad de poblacion sea par. Pues si el numero es impar la cantidad de la poblacion disminuye en 2
+
+    for i in range((cant_poblacion//2) ): #hay que preguntar si esta bien el //2 y que la cantidad de poblacion sea par. Pues si el numero es impar la cantidad de la poblacion disminuye en 2
         padre1 = random.choices(poblacion, probabilidad_seleccion, k=1)[0]
         padre2 = random.choices(poblacion, probabilidad_seleccion, k=1)[0]
         hijo1, hijo2 = crossover(padre1, padre2)
