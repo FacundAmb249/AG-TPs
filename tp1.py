@@ -5,12 +5,15 @@ import matplotlib.pyplot as plt
 import pandas as pd
 pd.set_option('display.max_rows', None)
 
+
+#Funcion que transforma binario a decimal
 def bin_to_dec(cromosoma):
     dec = 0
     for i in range(len(cromosoma)):
         dec += cromosoma[i]*2**(len(cromosoma)-1-i) 
     return dec
 
+#Funcion que crea la poblacion inicial en base a la cantidad de poblacion inicial y cant_genes (funcion objetivo)
 def crear_poblacion(cant_poblacion, cant_genes):
     for i in range(cant_poblacion):
       for j in range(cant_genes):
@@ -18,6 +21,18 @@ def crear_poblacion(cant_poblacion, cant_genes):
       poblacion.append(cromosoma[:])
       cromosoma.clear()
     return poblacion
+
+#Funcion que elige un cromosoma en base a su probabilidad (fitness)
+def ruleta(fitness, poblacion):
+    randomNum = random.random()
+    acum = 0
+    indiceCromosoma = 0
+    for i in range(len(fitness)):
+        if randomNum > acum and randomNum < (acum + fitness[i]):
+            indiceCromosoma = i
+            break  
+        acum += fitness[i]
+    return poblacion[indiceCromosoma]
 
 def crossover (padre1, padre2):
     num = random.randrange(0,100)
@@ -29,8 +44,6 @@ def crossover (padre1, padre2):
         hijo1 = padre1[:punto_corte] + padre2[punto_corte:]
         hijo2 = padre2[:punto_corte] + padre1[punto_corte:]
         print(f"punto de corte {punto_corte}")
-        # print(f"padre1 {padre1} y \npadre2 {padre2}")
-        # print(f"hijo1 {hijo1} y \nhijo2 {hijo2}")
     print(f"numero aleatorio {num} y probalidad_crossover {probabilidad_crossover*100}" )
     return hijo1, hijo2
 
@@ -55,10 +68,6 @@ def mutacion (hijo): #No se si los punto donde se hace la mutacion son correctos
     return hijo
 
 
-# prueba = bin(2**30-1)
-# print(prueba)
-# print(len(prueba)-2) este me da el largo del numero binario
-
 #variable inciales
 cant_poblacion = 10 #puse 4 y no 10 para que sea mas facil de ver y verificar que todo ande bien
 cant_genes = len(bin(2**30-1))-2 #-2 para quitarle el 0b al principio
@@ -67,20 +76,21 @@ probabilidad_mutacion = 0.05
 maxiteraciones = 200
 iteraciones =0
 poblacion = []
+poblacion2= []
 cromosoma = []
 valores = []
-datos_poblacionales = []
-datos_valores = []
 valores_funcion = []
-poblacion2= []
-probabilidad_seleccion = [] #aplicar fitness
+fitnessPoblacion = [] 
+datos_valores = []
+datos_poblacionales = []
 
-#creacion de la poblacion
+#Creacion de la poblacion
 crear_poblacion(cant_poblacion, cant_genes)
 print("poblacion inicial:")
 print(poblacion)
 
 while iteraciones < maxiteraciones:
+    iteraciones += 1
     print("-------------------------------------------------------------------------------------------------")
     print("poblacion inicial:")
     print(poblacion)
@@ -88,9 +98,9 @@ while iteraciones < maxiteraciones:
     for i in range(cant_poblacion):
         valores.append(bin_to_dec(poblacion[i]))
         valores_funcion.append((bin_to_dec(poblacion[i])/(2**30-1))**2)
-    print("valores antes de la funcion:")
+    print("valores decimales antes de aplicar la funcion:")
     print(valores)
-    print("valores despues de la funcion:")
+    print("valores despues de aplicar la funcion:")
     print(valores_funcion)
     datos_poblacionales.append([max(valores),min(valores),sum(valores)/cant_poblacion])
     datos_valores.append([max(valores_funcion),min(valores_funcion),sum(valores_funcion)/cant_poblacion])
@@ -99,17 +109,12 @@ while iteraciones < maxiteraciones:
     print("datos max, min y promedio despues de la funcion:")
     print(datos_valores)
     print(f"la cantidad de poblacion es: {cant_poblacion}")
-    #calcular el fitness de cada una de los cromosomas
-    for i in range(cant_poblacion):
-        probabilidad_seleccion.append(valores_funcion[i]/sum(valores_funcion))
-        print(f"probabilidad de seleccion del cromosoma {i}: {probabilidad_seleccion[i]}")
-    print("probabilidad de seleccion:")
-    print(probabilidad_seleccion)
 
-    #ruleta
-    #print(random.choices(poblacion, probabilidad_seleccion, k=1))
-    #el primer valor son los cromosomas para elegir y el segundo para la probabilidad de eleccion correspondiente con los cromosomas
-    #el [0] es para que no me devuelva una lista. el k=1 es para que me devuelva un solo valor.
+    #Calcula el fitness de cada una de los cromosomas
+    for i in range(cant_poblacion):
+        fitnessPoblacion.append(valores_funcion[i]/sum(valores_funcion))
+        print(f"Fitness del cromosoma {i}: {fitnessPoblacion[i]}")
+
 
     #elitismo
     #seleccionar los dos mejores cromosomas y pasarlos a la siguiente generacion
@@ -117,8 +122,8 @@ while iteraciones < maxiteraciones:
 
 
     for i in range((cant_poblacion//2) ): #hay que preguntar si esta bien el //2 y que la cantidad de poblacion sea par. Pues si el numero es impar la cantidad de la poblacion disminuye en 2
-        padre1 = random.choices(poblacion, probabilidad_seleccion, k=1)[0]
-        padre2 = random.choices(poblacion, probabilidad_seleccion, k=1)[0]
+        padre1 = ruleta(fitnessPoblacion,poblacion) 
+        padre2 = ruleta(fitnessPoblacion,poblacion)
         hijo1, hijo2 = crossover(padre1, padre2)
         hijo1 = mutacion(hijo1)
         hijo2 = mutacion(hijo2)
@@ -135,10 +140,10 @@ while iteraciones < maxiteraciones:
     poblacion2.clear()
     valores.clear()
     valores_funcion.clear()
-    probabilidad_seleccion.clear()
+    fitnessPoblacion.clear()
     print("resultado final:")
     print(poblacion)
-    iteraciones += 1
+
 print("-------------------------------------------------------------------------------------------------")
 print("poblacion final en numero:")
 for i in range(cant_poblacion):
