@@ -3,6 +3,7 @@
 import random
 import matplotlib.pyplot as plt
 import pandas as pd
+import sys
 pd.set_option('display.max_rows', None)
 pd.set_option('display.max_colwidth', None)
 
@@ -171,12 +172,22 @@ def generar_nueva_poblacion_torneo_con_elitismo(poblacion,fitnessPoblacion):
         poblacion2.append(hijo2)
     return poblacion2
 
+#-----------------------------------------MAIN-----------------------------------------
+if len(sys.argv) != 5 or sys.argv[1] != "-s" or sys.argv[3] != "-e":
+  print("Uso: python <nombre_archivo>.py -s <metodo_seleccion> -e <elitismo on/off>")
+  print("metodo seleccion: 1-ruleta, 2-torneo")
+  print("Elitismo: 0=off/desactivado, 1=on/activado")
+  sys.exit(1)
+
+metodo_seleccion = sys.argv[2]
+opcion_elitismo = sys.argv[4]
+
 #VARIABLE INICIALES
 cant_poblacion = 10 
 cant_genes = len(bin(2**30-1))-2 #-2 para quitarle el 0b al principio
 probabilidad_crossover = 0.75
 probabilidad_mutacion = 0.05
-maxiteraciones = 200
+maxiteraciones = 1
 
 poblacion = []
 cromosoma = []
@@ -185,19 +196,56 @@ datos_valores = []
 datos_poblacionales = []
 maxCromosoma = []
 
-#Creacion de la poblacion
-crear_poblacion(cant_poblacion, cant_genes)
-print("poblacion inicial:")
-print(poblacion)
+if metodo_seleccion == "1":
+    #Creacion de la poblacion
+    poblacion = crear_poblacion(cant_poblacion, cant_genes)
+    print("poblacion inicial:")
+    print(poblacion)
+    if opcion_elitismo == "0":
+        print("Se selecciono ruleta sin elitismo")
+        #iteraciones
+        for iteraciones in range(maxiteraciones):
+            print("-------------------------------------------------------------------------------------------------")
+            fitnessPoblacion = []
+            fitnessPoblacion = fitness(poblacion)
+            poblacion = generar_nueva_poblacion_ruleta_sin_elitismo(poblacion, fitnessPoblacion)
+            print(f"poblacion en la iteracion {iteraciones+1}: {poblacion}")
+    else:
+        print("Se selecciono ruleta con elitismo")
+        #iteraciones
+        for iteraciones in range(maxiteraciones):
+            print("-------------------------------------------------------------------------------------------------")
+            fitnessPoblacion = []
+            fitnessPoblacion = fitness(poblacion)
+            poblacion = generar_nueva_poblacion_ruleta_con_elitismo(poblacion, fitnessPoblacion)
+            print(f"poblacion en la iteracion {iteraciones+1}: {poblacion}")
+elif metodo_seleccion == "2":
+    #Creacion de la poblacion
+    poblacion = crear_poblacion(cant_poblacion, cant_genes)
+    print("poblacion inicial:")
+    print(poblacion)
 
-#iteraciones
-for iteraciones in range(maxiteraciones):
-    print("-------------------------------------------------------------------------------------------------")
-    fitnessPoblacion = []
-    fitnessPoblacion = fitness(poblacion)
-    poblacion = generar_nueva_poblacion_torneo_con_elitismo(poblacion, fitnessPoblacion)
-    print(f"poblacion en la iteracion {iteraciones+1}: {poblacion}")
-
+    if opcion_elitismo == "0":
+        print("Se selecciono torneo sin elitismo")
+        #iteraciones
+        for iteraciones in range(maxiteraciones):
+            print("-------------------------------------------------------------------------------------------------")
+            fitnessPoblacion = []
+            fitnessPoblacion = fitness(poblacion)
+            poblacion = generar_nueva_poblacion_torneo_sin_elitismo(poblacion, fitnessPoblacion)
+            print(f"poblacion en la iteracion {iteraciones+1}: {poblacion}")
+    else:
+        print("Se selecciono torneo con elitismo")
+        #iteraciones
+        for iteraciones in range(maxiteraciones):
+            print("-------------------------------------------------------------------------------------------------")
+            fitnessPoblacion = []
+            fitnessPoblacion = fitness(poblacion)
+            poblacion = generar_nueva_poblacion_torneo_con_elitismo(poblacion, fitnessPoblacion)
+            print(f"poblacion en la iteracion {iteraciones+1}: {poblacion}")
+else:
+    print("Estrategia de seleccion invalida o elitismo invalido")
+    sys.exit(1)
 
 print("cromosoma con valor maximo:")
 print(maxCromosoma)
