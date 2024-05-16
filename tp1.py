@@ -155,12 +155,28 @@ def generar_nueva_poblacion_torneo_sin_elitismo(poblacion,fitnessPoblacion):
         poblacion2.append(hijo2)
     return poblacion2
 
+def generar_nueva_poblacion_torneo_con_elitismo(poblacion,fitnessPoblacion):
+    global cant_poblacion
+    poblacion2= []
+    cromosoma1, cromosoma2 = elitismo(poblacion, fitnessPoblacion)
+    poblacion2.append(cromosoma1)
+    poblacion2.append(cromosoma2)
+    for i in range((cant_poblacion//2)-1): 
+        padre1 = torneo(fitnessPoblacion,poblacion)
+        padre2 = torneo(fitnessPoblacion,poblacion)
+        hijo1, hijo2 = crossover(padre1, padre2)
+        hijo1 = mutacion(hijo1)
+        hijo2 = mutacion(hijo2)
+        poblacion2.append(hijo1)
+        poblacion2.append(hijo2)
+    return poblacion2
+
 #VARIABLE INICIALES
 cant_poblacion = 10 
 cant_genes = len(bin(2**30-1))-2 #-2 para quitarle el 0b al principio
 probabilidad_crossover = 0.75
 probabilidad_mutacion = 0.05
-maxiteraciones = 20
+maxiteraciones = 200
 
 poblacion = []
 cromosoma = []
@@ -179,7 +195,7 @@ for iteraciones in range(maxiteraciones):
     print("-------------------------------------------------------------------------------------------------")
     fitnessPoblacion = []
     fitnessPoblacion = fitness(poblacion)
-    poblacion = generar_nueva_poblacion_torneo_sin_elitismo(poblacion, fitnessPoblacion)
+    poblacion = generar_nueva_poblacion_torneo_con_elitismo(poblacion, fitnessPoblacion)
     print(f"poblacion en la iteracion {iteraciones+1}: {poblacion}")
 
 
