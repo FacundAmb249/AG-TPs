@@ -42,16 +42,11 @@ def crossover (padre1, padre2):
         punto_corte = random.randint(1,cant_genes-1)
         hijo1 = padre1[:punto_corte] + padre2[punto_corte:]
         hijo2 = padre2[:punto_corte] + padre1[punto_corte:]
-    #     print(f"punto de corte {punto_corte}")
-    # print(f"numero aleatorio {num} y probalidad_crossover {probabilidad_crossover*100}" )
     return hijo1, hijo2
 
 def mutacion (hijo): #No se si los punto donde se hace la mutacion son correctos para el caso que el punto1 sea igual al comienzo (posicion 0) y punto2 sea igual al final (posicion 5)
     num = random.randrange(0,100)
-    # print(f"numero aleatorio {num} y probabilidad_mutacion {probabilidad_mutacion*100}" )
     if num < (probabilidad_mutacion*100):
-        # punto_mutacion = random.randint(0,cant_genes-1)
-        # hijo[punto_mutacion] = 1 - hijo[punto_mutacion]
         punto1 = random.randint(0,cant_genes-1)
         punto2 = random.randint(0,cant_genes-1)
         #si los puntos son iguales o consecutivos se vuelve a buscar, ya que sino el cromosoma queda igual
@@ -61,9 +56,7 @@ def mutacion (hijo): #No se si los punto donde se hace la mutacion son correctos
         print(f"punto1 {punto1} y punto2 {punto2}")
         if punto1 > punto2:
             punto1, punto2 = punto2, punto1
-            # print(f"hijo sin modificar {hijo} para cuando punto1 > punto2 se invierte el valor de cada uno")
         hijo = hijo[:punto1] + hijo[punto1:punto2][::-1] + hijo[punto2:]
-        # print(f"hijo {hijo} para cuando punto1 < punto2")
     return hijo
 
 def fitness(poblacion):
@@ -92,8 +85,9 @@ def fitness(poblacion):
     #Calcula el fitness de cada una de los cromosomas
     for i in range(cant_poblacion):
         fitnessPoblacion.append(valores_funcion[i]/sum(valores_funcion))
-        # print(f"Fitness del cromosoma {i}: {fitnessPoblacion[i]}")
     return fitnessPoblacion
+
+
 
 #Funcion que genera una nueva poblacion en base a la ruleta y sin elitismo
 def generar_nueva_poblacion_ruleta_sin_elitismo(poblacion, fitnessPoblacion):
@@ -107,20 +101,42 @@ def generar_nueva_poblacion_ruleta_sin_elitismo(poblacion, fitnessPoblacion):
         hijo2 = mutacion(hijo2)
         poblacion2.append(hijo1)
         poblacion2.append(hijo2)
-        # print("padres:")
-        # print(padre1)
-        # print(padre2)
-        # print("hijos:")
-        # print(hijo1)
-        # print(hijo2)
     return poblacion2
-    
+
+def elitismo(poblacion,fitnessPoblacion):
+    #Obtengo los dos cromosomas con mayor valor
+    fitness_acomodado = sorted(fitnessPoblacion,reverse=True)
+    maximos = fitness_acomodado[:2]
+    cromosomas = []
+    for i in range(2):
+        indice = fitnessPoblacion.index(maximos[i])
+        cromosomas.append(poblacion[indice])
+    cromosoma1 = cromosomas[0]
+    cromosoma2 = cromosomas[1]
+    return cromosoma1, cromosoma2
+
+def generar_nueva_poblacion_ruleta_con_elitismo(poblacion,fitnessPoblacion):
+    global cant_poblacion
+    poblacion2= []
+    cromosoma1, cromosoma2 = elitismo(poblacion, fitnessPoblacion)
+    poblacion2.append(cromosoma1)
+    poblacion2.append(cromosoma2)
+    for i in range((cant_poblacion//2)-1): 
+        padre1 = ruleta(fitnessPoblacion,poblacion)
+        padre2 = ruleta(fitnessPoblacion,poblacion)
+        hijo1, hijo2 = crossover(padre1, padre2)
+        hijo1 = mutacion(hijo1)
+        hijo2 = mutacion(hijo2)
+        poblacion2.append(hijo1)
+        poblacion2.append(hijo2)
+    return poblacion2
+
 #VARIABLE INICIALES
 cant_poblacion = 10 
 cant_genes = len(bin(2**30-1))-2 #-2 para quitarle el 0b al principio
 probabilidad_crossover = 0.75
 probabilidad_mutacion = 0.05
-maxiteraciones = 200
+maxiteraciones = 20
 
 poblacion = []
 cromosoma = []
@@ -136,24 +152,16 @@ print(poblacion)
 
 #iteraciones
 for iteraciones in range(maxiteraciones):
-    fitnessPoblacion = []
-    
     print("-------------------------------------------------------------------------------------------------")
-    # print("poblacion inicial:")
-    # print(poblacion)
+    fitnessPoblacion = []
     fitnessPoblacion = fitness(poblacion)
     #elitismo
     #seleccionar los dos mejores cromosomas y pasarlos a la siguiente generacion
     #Considero como mejor cromosoma a los 2 de mayor valor y modifico el rango par que se reste 1 repeticion y haya solo 4 cromosomas
+    poblacion = generar_nueva_poblacion_ruleta_con_elitismo(poblacion, fitnessPoblacion)
+    print(f"poblacion en la iteracion {iteraciones+1}: {poblacion}")
 
-    poblacion = generar_nueva_poblacion_ruleta_sin_elitismo(poblacion, fitnessPoblacion)
-    # print("resultado final:")
-    # print(poblacion)
 
-# print("-------------------------------------------------------------------------------------------------")
-# print("poblacion final:")
-# for i in range(cant_poblacion):
-#     print(poblacion[i])
 print("cromosoma con valor maximo:")
 print(maxCromosoma)
 print(bin_to_dec(maxCromosoma))
@@ -168,7 +176,7 @@ ejex= list(range(maxiteraciones))
 valores_maximos = [val[0] for val in datos_valores]
 valores_minimos = [val[1] for val in datos_valores]
 valores_promedios = [val[2] for val in datos_valores]
-# Grafica de la funcion objetivo para 200 interaciones
+# Grafica de la funcion objetivo para n interaciones
 plt.figure(1)
 plt.plot(ejex, valores_maximos,label='valores maximos')
 plt.plot(ejex, valores_minimos,label='valores minimos')
