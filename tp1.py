@@ -131,6 +131,30 @@ def generar_nueva_poblacion_ruleta_con_elitismo(poblacion,fitnessPoblacion):
         poblacion2.append(hijo2)
     return poblacion2
 
+def torneo(fitnessPoblacion,poblacion):
+    global cant_poblacion
+    cromosomas_seleccionados = []
+    max = []
+    for i in range(4):
+        cromosomas_seleccionados.append(poblacion[random.randint(0,cant_poblacion-1)])
+    for i in range(4):
+        if max == [] or fitnessPoblacion[poblacion.index(cromosomas_seleccionados[i])] > fitnessPoblacion[poblacion.index(max)]:
+            max = cromosomas_seleccionados[i]
+    return max
+
+def generar_nueva_poblacion_torneo_sin_elitismo(poblacion,fitnessPoblacion):
+    global cant_poblacion
+    poblacion2= []
+    for i in range((cant_poblacion//2) ): 
+        padre1 = torneo(fitnessPoblacion,poblacion)
+        padre2 = torneo(fitnessPoblacion,poblacion)
+        hijo1, hijo2 = crossover(padre1, padre2)
+        hijo1 = mutacion(hijo1)
+        hijo2 = mutacion(hijo2)
+        poblacion2.append(hijo1)
+        poblacion2.append(hijo2)
+    return poblacion2
+
 #VARIABLE INICIALES
 cant_poblacion = 10 
 cant_genes = len(bin(2**30-1))-2 #-2 para quitarle el 0b al principio
@@ -155,10 +179,7 @@ for iteraciones in range(maxiteraciones):
     print("-------------------------------------------------------------------------------------------------")
     fitnessPoblacion = []
     fitnessPoblacion = fitness(poblacion)
-    #elitismo
-    #seleccionar los dos mejores cromosomas y pasarlos a la siguiente generacion
-    #Considero como mejor cromosoma a los 2 de mayor valor y modifico el rango par que se reste 1 repeticion y haya solo 4 cromosomas
-    poblacion = generar_nueva_poblacion_ruleta_con_elitismo(poblacion, fitnessPoblacion)
+    poblacion = generar_nueva_poblacion_torneo_sin_elitismo(poblacion, fitnessPoblacion)
     print(f"poblacion en la iteracion {iteraciones+1}: {poblacion}")
 
 
