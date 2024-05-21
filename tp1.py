@@ -1,5 +1,6 @@
 #Falta corregir el metodo de mutacion y que se ejecute varias veces (ademas de hacer mas legible el codigo)
 
+import sys
 import random
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -132,6 +133,31 @@ def generar_nueva_poblacion(poblacion, fitnessPoblacion, boolElitismo, boolRulet
         poblacion2.append(hijo2)
     return poblacion2
 
+
+#-----------------------------------------MAIN-----------------------------------------
+
+if len(sys.argv) != 5 or sys.argv[1] != "-s" or sys.argv[3] != "-e":
+  print("Uso: python <nombre_archivo>.py -s <metodo_seleccion> -e <elitismo on/off>")
+  print("metodo seleccion: 1-ruleta, 2-torneo")
+  print("Elitismo: 0=off/desactivado, 1=on/activado")
+  sys.exit(1)
+
+
+metodo_seleccion = sys.argv[2]
+opcion_elitismo = sys.argv[4]
+
+
+if metodo_seleccion == '1':
+    boolRuleta = True
+elif metodo_seleccion == '2':
+    boolRuleta = False
+
+if opcion_elitismo == '0':
+    boolElitismo = False
+elif opcion_elitismo == '1':
+    boolElitismo = True
+
+
 #VARIABLE INICIALES
 cant_poblacion = 10 
 cant_genes = len(bin(2**30-1))-2 #-2 para quitarle el 0b al principio
@@ -156,7 +182,7 @@ for iteraciones in range(maxiteraciones):
     print("-------------------------------------------------------------------------------------------------")
     fitnessPoblacion = []
     fitnessPoblacion = fitness(poblacion)
-    poblacion = generar_nueva_poblacion(poblacion, fitnessPoblacion, False, False)
+    poblacion = generar_nueva_poblacion(poblacion, fitnessPoblacion, boolElitismo, boolRuleta)
     print(f"poblacion en la iteracion {iteraciones+1}: {poblacion}")
 
 
