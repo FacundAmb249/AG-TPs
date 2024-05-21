@@ -88,6 +88,27 @@ def fitness(poblacion):
     return fitnessPoblacion
 
 
+def generar_nueva_poblacion(poblacion, fitnessPoblacion, boolElitismo, boolRuleta):
+    global cant_poblacion
+    poblacion2= []
+    if boolElitismo == True:
+        cromosoma1, cromosoma2 = elitismo(poblacion, fitnessPoblacion)
+        poblacion2.append(cromosoma1)
+        poblacion2.append(cromosoma2)
+    #Falta restarle uno, debido a que si elitismo es true entonces hay un valor menos
+    for i in range((cant_poblacion//2) ): 
+        if boolRuleta == True:
+            padre1 = ruleta(fitnessPoblacion,poblacion)
+            padre2 = ruleta(fitnessPoblacion,poblacion)
+        else: 
+            padre1 = torneo(fitnessPoblacion,poblacion)
+            padre2 = torneo(fitnessPoblacion,poblacion)
+        hijo1, hijo2 = crossover(padre1, padre2)
+        hijo1 = mutacion(hijo1)
+        hijo2 = mutacion(hijo2)
+        poblacion2.append(hijo1)
+        poblacion2.append(hijo2)
+    return poblacion2
 
 #Funcion que genera una nueva poblacion en base a la ruleta y sin elitismo
 def generar_nueva_poblacion_ruleta_sin_elitismo(poblacion, fitnessPoblacion):
@@ -195,7 +216,7 @@ for iteraciones in range(maxiteraciones):
     print("-------------------------------------------------------------------------------------------------")
     fitnessPoblacion = []
     fitnessPoblacion = fitness(poblacion)
-    poblacion = generar_nueva_poblacion_torneo_con_elitismo(poblacion, fitnessPoblacion)
+    poblacion = generar_nueva_poblacion(poblacion, fitnessPoblacion, True, True)
     print(f"poblacion en la iteracion {iteraciones+1}: {poblacion}")
 
 
