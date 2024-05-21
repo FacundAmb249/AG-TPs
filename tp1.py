@@ -114,12 +114,13 @@ def elitismo(poblacion,fitnessPoblacion):
 def generar_nueva_poblacion(poblacion, fitnessPoblacion, boolElitismo, boolRuleta):
     global cant_poblacion
     poblacion2= []
+    recorrido = (cant_poblacion//2)
     if boolElitismo == True:
         cromosoma1, cromosoma2 = elitismo(poblacion, fitnessPoblacion)
         poblacion2.append(cromosoma1)
         poblacion2.append(cromosoma2)
-    #Falta restarle uno, debido a que si elitismo es true entonces hay un valor menos
-    for i in range((cant_poblacion//2) ): 
+        recorrido = ((cant_poblacion//2) -1)
+    for i in range(recorrido): 
         if boolRuleta == True:
             padre1 = ruleta(fitnessPoblacion,poblacion)
             padre2 = ruleta(fitnessPoblacion,poblacion)
