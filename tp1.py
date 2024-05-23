@@ -1,5 +1,6 @@
 #Falta corregir el metodo de mutacion y que se ejecute varias veces (ademas de hacer mas legible el codigo)
 
+import sys
 import random
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -20,18 +21,6 @@ def crear_poblacion(cant_poblacion, cant_genes):
         cromosoma = [random.randint(0, 1) for i in range(cant_genes)]
         poblacion.append(cromosoma)
     return poblacion
-
-#Funcion que elige un cromosoma en base a su probabilidad (fitness)
-def ruleta(fitness, poblacion):
-    randomNum = random.random()
-    acum = 0
-    indiceCromosoma = 0
-    for i in range(len(fitness)):
-        if randomNum > acum and randomNum < (acum + fitness[i]):
-            indiceCromosoma = i
-            break  
-        acum += fitness[i]
-    return poblacion[indiceCromosoma]
 
 def crossover (padre1, padre2):
     num = random.randrange(0,100)
@@ -87,21 +76,27 @@ def fitness(poblacion):
         fitnessPoblacion.append(valores_funcion[i]/sum(valores_funcion))
     return fitnessPoblacion
 
+def ruleta(fitness, poblacion):
+    randomNum = random.random()
+    acum = 0
+    indiceCromosoma = 0
+    for i in range(len(fitness)):
+        if randomNum > acum and randomNum < (acum + fitness[i]):
+            indiceCromosoma = i
+            break  
+        acum += fitness[i]
+    return poblacion[indiceCromosoma]
 
-
-#Funcion que genera una nueva poblacion en base a la ruleta y sin elitismo
-def generar_nueva_poblacion_ruleta_sin_elitismo(poblacion, fitnessPoblacion):
+def torneo(fitnessPoblacion,poblacion):
     global cant_poblacion
-    poblacion2= []
-    for i in range((cant_poblacion//2) ): 
-        padre1 = ruleta(fitnessPoblacion,poblacion)
-        padre2 = ruleta(fitnessPoblacion,poblacion)
-        hijo1, hijo2 = crossover(padre1, padre2)
-        hijo1 = mutacion(hijo1)
-        hijo2 = mutacion(hijo2)
-        poblacion2.append(hijo1)
-        poblacion2.append(hijo2)
-    return poblacion2
+    cromosomas_seleccionados = []
+    max = []
+    for i in range(4):
+        cromosomas_seleccionados.append(poblacion[random.randint(0,cant_poblacion-1)])
+    for i in range(4):
+        if max == [] or fitnessPoblacion[poblacion.index(cromosomas_seleccionados[i])] > fitnessPoblacion[poblacion.index(max)]:
+            max = cromosomas_seleccionados[i]
+    return max
 
 def elitismo(poblacion,fitnessPoblacion):
     #Obtengo los dos cromosomas con mayor valor
@@ -115,15 +110,23 @@ def elitismo(poblacion,fitnessPoblacion):
     cromosoma2 = cromosomas[1]
     return cromosoma1, cromosoma2
 
-def generar_nueva_poblacion_ruleta_con_elitismo(poblacion,fitnessPoblacion):
+
+def generar_nueva_poblacion(poblacion, fitnessPoblacion, boolElitismo, boolRuleta):
     global cant_poblacion
     poblacion2= []
-    cromosoma1, cromosoma2 = elitismo(poblacion, fitnessPoblacion)
-    poblacion2.append(cromosoma1)
-    poblacion2.append(cromosoma2)
-    for i in range((cant_poblacion//2)-1): 
-        padre1 = ruleta(fitnessPoblacion,poblacion)
-        padre2 = ruleta(fitnessPoblacion,poblacion)
+    recorrido = (cant_poblacion//2)
+    if boolElitismo == True:
+        cromosoma1, cromosoma2 = elitismo(poblacion, fitnessPoblacion)
+        poblacion2.append(cromosoma1)
+        poblacion2.append(cromosoma2)
+        recorrido = ((cant_poblacion//2) -1)
+    for i in range(recorrido): 
+        if boolRuleta == True:
+            padre1 = ruleta(fitnessPoblacion,poblacion)
+            padre2 = ruleta(fitnessPoblacion,poblacion)
+        else: 
+            padre1 = torneo(fitnessPoblacion,poblacion)
+            padre2 = torneo(fitnessPoblacion,poblacion)
         hijo1, hijo2 = crossover(padre1, padre2)
         hijo1 = mutacion(hijo1)
         hijo2 = mutacion(hijo2)
@@ -131,45 +134,30 @@ def generar_nueva_poblacion_ruleta_con_elitismo(poblacion,fitnessPoblacion):
         poblacion2.append(hijo2)
     return poblacion2
 
-def torneo(fitnessPoblacion,poblacion):
-    global cant_poblacion
-    cromosomas_seleccionados = []
-    max = []
-    for i in range(4):
-        cromosomas_seleccionados.append(poblacion[random.randint(0,cant_poblacion-1)])
-    for i in range(4):
-        if max == [] or fitnessPoblacion[poblacion.index(cromosomas_seleccionados[i])] > fitnessPoblacion[poblacion.index(max)]:
-            max = cromosomas_seleccionados[i]
-    return max
 
-def generar_nueva_poblacion_torneo_sin_elitismo(poblacion,fitnessPoblacion):
-    global cant_poblacion
-    poblacion2= []
-    for i in range((cant_poblacion//2) ): 
-        padre1 = torneo(fitnessPoblacion,poblacion)
-        padre2 = torneo(fitnessPoblacion,poblacion)
-        hijo1, hijo2 = crossover(padre1, padre2)
-        hijo1 = mutacion(hijo1)
-        hijo2 = mutacion(hijo2)
-        poblacion2.append(hijo1)
-        poblacion2.append(hijo2)
-    return poblacion2
+#-----------------------------------------MAIN-----------------------------------------
 
-def generar_nueva_poblacion_torneo_con_elitismo(poblacion,fitnessPoblacion):
-    global cant_poblacion
-    poblacion2= []
-    cromosoma1, cromosoma2 = elitismo(poblacion, fitnessPoblacion)
-    poblacion2.append(cromosoma1)
-    poblacion2.append(cromosoma2)
-    for i in range((cant_poblacion//2)-1): 
-        padre1 = torneo(fitnessPoblacion,poblacion)
-        padre2 = torneo(fitnessPoblacion,poblacion)
-        hijo1, hijo2 = crossover(padre1, padre2)
-        hijo1 = mutacion(hijo1)
-        hijo2 = mutacion(hijo2)
-        poblacion2.append(hijo1)
-        poblacion2.append(hijo2)
-    return poblacion2
+if len(sys.argv) != 5 or sys.argv[1] != "-s" or sys.argv[3] != "-e":
+  print("Uso: python <nombre_archivo>.py -s <metodo_seleccion> -e <elitismo on/off>")
+  print("metodo seleccion: 1-ruleta, 2-torneo")
+  print("Elitismo: 0=off/desactivado, 1=on/activado")
+  sys.exit(1)
+
+
+metodo_seleccion = sys.argv[2]
+opcion_elitismo = sys.argv[4]
+
+
+if metodo_seleccion == '1':
+    boolRuleta = True
+elif metodo_seleccion == '2':
+    boolRuleta = False
+
+if opcion_elitismo == '0':
+    boolElitismo = False
+elif opcion_elitismo == '1':
+    boolElitismo = True
+
 
 #VARIABLE INICIALES
 cant_poblacion = 10 
@@ -195,7 +183,7 @@ for iteraciones in range(maxiteraciones):
     print("-------------------------------------------------------------------------------------------------")
     fitnessPoblacion = []
     fitnessPoblacion = fitness(poblacion)
-    poblacion = generar_nueva_poblacion_torneo_con_elitismo(poblacion, fitnessPoblacion)
+    poblacion = generar_nueva_poblacion(poblacion, fitnessPoblacion, boolElitismo, boolRuleta)
     print(f"poblacion en la iteracion {iteraciones+1}: {poblacion}")
 
 
