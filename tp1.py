@@ -13,7 +13,8 @@ def bin_to_dec(cromosoma):
         dec += cromosoma[i]*2**(len(cromosoma)-1-i) 
     return dec
 
-#Funcion que crea la poblacion inicial en base a la cantidad de poblacion inicial y cantidad de genes que van a tener los cromosomas
+#Funcion que crea la poblacion inicial en base a la cantidad de poblacion inicial 
+#y cantidad de genes que van a tener los cromosomas
 def crear_poblacion(cant_poblacion, cant_genes):
     for _ in range(cant_poblacion):
         cromosoma = [random.randint(0, 1) for i in range(cant_genes)]
@@ -63,9 +64,8 @@ def fitness(poblacion):
         valores_funcion.append((bin_to_dec(cromosoma)/(2**30-1))**2)
     
     #Guardo los valores maximos, minimos y promedios de la poblacion en decimal y funcion objetivo
-    datos_poblacionales.append([max(valores),min(valores),int(sum(valores)/len(valores)),max(poblacion)])
-    datos_valores.append([max(valores_funcion),min(valores_funcion),sum(valores_funcion)/len(valores_funcion)])
-
+    datos_poblacionales.append([max(valores),min(valores),int(sum(valores)/len(valores))])
+    datos_valores.append([max(valores_funcion),min(valores_funcion),sum(valores_funcion)/len(valores_funcion),max(poblacion)])
     #Calcula el fitness de cada una de los cromosomas de la poblacion
     for i in range(cant_poblacion):
         fitnessPoblacion.append(valores_funcion[i]/sum(valores_funcion))
@@ -158,11 +158,11 @@ elif opcion_elitismo == '1':
 
 
 #VARIABLE INICIALES
-cant_poblacion = 10 
+cant_poblacion = 10
 cant_genes = len(bin(2**30-1))-2 #-2 para quitarle el 0b al principio
-probabilidad_crossover = 0.75
-probabilidad_mutacion = 0.05
-maxiteraciones = 200
+probabilidad_crossover = 0
+probabilidad_mutacion = 0
+maxiteraciones = 100
 
 poblacion = []
 cromosoma = []
@@ -187,7 +187,7 @@ print(bin_to_dec(maxCromosoma))
 
 # Crear un DataFrame(tabla) con los datos de la población
 Columnas = ['Maximos', 'Minimos', 'Promedios','cromosoma del maximo']
-df = pd.DataFrame(datos_poblacionales, columns=Columnas,index=list(range(1,maxiteraciones+1)))
+df = pd.DataFrame(datos_valores, columns=Columnas,index=list(range(1,maxiteraciones+1)))
 print(df)
 
 df.to_excel('resultados_ruleta_sin_elitismo.xlsx', sheet_name='Resultados', index_label='Iteración')
