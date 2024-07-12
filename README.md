@@ -4,9 +4,7 @@ Correr el archivo con el comando
 python tp2.py -b <tipo_busqueda> -o <opcion>
 ```
 ## Parámetros
-- -b
-  0 búsqueda exhaustiva
-  1 búsqueda greedy (goloso)
-- -o
-  0 volumen (cm³)
-  1 peso (grs.)
+- -b 0 : búsqueda exhaustiva
+- -b 1 : búsqueda greedy (goloso)
+- -o 0 : volumen (cm³)
+- -o 1 : peso (grs.)
