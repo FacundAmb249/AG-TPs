@@ -1,8 +1,8 @@
 # Algoritmos Genéticos - TP2
 Correr el archivo con el comando
-- ```sh
-  python tp2.py -b <tipo_busqueda> -o <opcion>
-
+```sh
+python tp2.py -b <tipo_busqueda> -o <opcion>
+```
 ## Parámetros
 - -b
   0 búsqueda exhaustiva
