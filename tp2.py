@@ -1,11 +1,10 @@
 import sys
 
-# Funcion que transforma binario a decimal
-def bin_to_dec(cromosoma):
-    dec = 0
-    for i in range(len(cromosoma)):
-        dec += cromosoma[i]*2**(len(cromosoma)-1-i)
-    return dec
+#Cantidad de elementos para $ máximo para un volumen maxLista
+
+def greedySearch():
+  #Sacar el exit cuando se complete esta sección
+  sys.exit(1)
 
 # Main
 if len(sys.argv) != 5 or sys.argv[1] != "-b" or sys.argv[3] != "-l":
@@ -21,14 +20,29 @@ elif sys.argv[2] != '1' and sys.argv[2] != '2':
   sys.exit(1)
 elif sys.argv[4] != '1' and sys.argv[4] != '2':
   print("Lista inexistente")
-  sys.exit(1)
-
-busqueda = int(sys.argv[2])
-lista = int(sys.argv[4])
 
 lista_1a = [150, 325, 600, 805, 430, 1200, 770, 60, 930, 353] # cm³
 lista_1b = [20, 40, 50, 36, 25, 64, 54, 18, 46, 28] # $
-max_1 = 4200 # cm³
+maxLista_1 = 4200 # cm³
 lista_2a = [1800, 600, 1200] # grs.
 lista_2b = [72, 36, 60] # $
-max_2 = 3600 # grs.
+maxLista_2 = 3600 # grs.
+
+if sys.argv[4] = '1':
+  lista_a = lista_1a
+  lista_b = lista_1b
+  maxLista = maxLista_1
+elif sys.argv[4] = '2':
+  lista_a = lista_2a
+  lista_b = lista_2b
+  maxLista = maxLista_2
+
+elementosEnMochila = []
+vpMochila = 0     #cm³ or grs.
+valorMochila = 0  # $
+
+if sys.argv[2] = '1': #Búsqueda exhaustiva
+  #Sacar el exit cuando se complete esta sección
+  sys.exit(1)
+if sys.argv[2] = '2': #Búsqueda greedy (golosa)
+  greedySearch()
