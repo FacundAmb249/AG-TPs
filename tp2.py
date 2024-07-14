@@ -1,26 +1,28 @@
+import pandas #para armar la tabla de datos del final
 import sys
 
 #Cantidad de elementos para $ máximo para un volumen maxLista
-#Se podría pasar a una colección de datos para tener una sola variable de lista.
 
 #Ordena de mayor a menor
-def ordenaDesc(lista_a, lista_b, lista_c):
-  for i in range(len(lista_a)):
-    for j in range(i+1, len(lista_a)):
-      if lista_c[i] < lista_c[j]:
-        lista_a[i], lista_a[j] = lista_a[j], lista_a[i]
-        lista_b[i], lista_b[j] = lista_b[j], lista_b[i]
-        lista_c[i], lista_c[j] = lista_c[j], lista_c[i]
+def ordenaDesc(lista):
+  for i in range(len(lista[0])):
+    for j in range(i+1, len(lista[0])):
+      if lista[2][i] < lista[2][j]:
+        #invierte la posición de ambos valores
+        lista[0][i], lista[0][j] = lista[0][j], lista[0][i]
+        lista[1][i], lista[1][j] = lista[1][j], lista[1][i]
+        lista[2][i], lista[2][j] = lista[2][j], lista[2][i]
 
-def greedyBusqueda(lista_a, lista_b, lista_c, maxLista):
-  ordenaDesc(lista_a, lista_b, lista_c)
-  for i in range(len(lista_a)):
-    if vpMochila + lista_b[i] <= maxLista:
-      vpMochila += lista_b[i]
-      valorMochila += lista_c[i]
-      elementosEnMochila_a.append(lista_a[i])
-      elementosEnMochila_b.append(lista_b[i])
-      elementosEnMochila_c.append(lista_c[i])
+def greedyBusqueda(lista, maxLista):
+  vpMochila = 0     #cm³ or grs.
+  valorMochila = 0  # $
+  ordenaDesc(lista)
+  for i in range(len(lista[0])):
+    if vpMochila + lista[1][i] <= maxLista:
+      vpMochila += lista[1][i]
+      valorMochila += lista[2][i]
+      elementosEnMochila.append([lista[0][i], lista[1][i], lista[2][i]])
+  return elementosEnMochila, vpMochila, valorMochila
 
 # Main
 if len(sys.argv) != 5 or sys.argv[1] != "-b" or sys.argv[3] != "-l":
@@ -38,35 +40,33 @@ elif sys.argv[4] != '1' and sys.argv[4] != '2':
   print("Lista inexistente")
 
 #Se podría pasar a una colección de datos para tener una sola variable de lista.
-lista_1a = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] # pos
-lista_1b = [150, 325, 600, 805, 430, 1200, 770, 60, 930, 353] # cm³
-lista_1c = [20, 40, 50, 36, 25, 64, 54, 18, 46, 28] # $
-maxLista_1 = 4200 # cm³
-lista_2a = [1, 2, 3] # pos
-lista_2b = [1800, 600, 1200] # grs.
-lista_2c = [72, 36, 60] # $
-maxLista_2 = 3600 # grs.
+lista_1 = [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10], [150, 325, 600, 805, 430, 1200, 770, 60, 930, 353], [20, 40, 50, 36, 25, 64, 54, 18, 46, 28]] #pos, cm³, $
+maxLista_1 = 4200 #cm³
+lista_2 = [[1, 2, 3], [1800, 600, 1200], [72, 36, 60]] #pos, grs., $
+maxLista_2 = 3600 #grs.
 
-if sys.argv[4] = '1':
-  lista_a = lista_1a
-  lista_b = lista_1b
-  lista_c = lista_1c
-  maxLista = maxLista_1
-elif sys.argv[4] = '2':
-  lista_a = lista_2a
-  lista_b = lista_2b
-  lista_c = lista_2c
-  maxLista = maxLista_2
+if sys.argv[4] == '1':
+  lista = lista_1
+  maxLista= maxLista_1
+  columnas = ["N. objeto", "Volúmen (cm³)", "Valor ($)"]
+  unidad = "cm³"
+elif sys.argv[4] == '2':
+  lista = lista_2
+  maxLista= maxLista_2
+  columnas = ["N. objeto", "Peso (grs.)", "Valor ($)"]
+  unidad = "grs."
 
-elementosEnMochila_a = []
-elementosEnMochila_b = []
-elementosEnMochila_c = []
-vpMochila = 0     #cm³ or grs.
-valorMochila = 0  # $
+elementosEnMochila = []
 
-if sys.argv[2] = '1': #Búsqueda exhaustiva
+if sys.argv[2] == '1': #Búsqueda exhaustiva
   #Sacar el exit cuando se complete esta sección
   print("Completar esta sección")
   sys.exit(1)
-if sys.argv[2] = '2': #Búsqueda greedy (golosa)
-  greedyBusqueda(lista_a, lista_b, lista_c, maxLista)
+elif sys.argv[2] == '2': #Búsqueda greedy (golosa)
+  elementosEnMochila, vpMochila, valorMochila = greedyBusqueda(lista, maxLista)
+
+datos = pandas.DataFrame(elementosEnMochila, columns=columnas)
+print(datos)
+print("Capacidad total =", maxLista, unidad)
+print("Peso total =", vpMochila, unidad)
+print("Precio final = $", valorMochila)
