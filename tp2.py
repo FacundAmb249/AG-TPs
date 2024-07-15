@@ -24,6 +24,43 @@ def greedyBusqueda(lista, maxLista):
       elementosEnMochila.append([lista[0][i], lista[1][i], lista[2][i]])
   return elementosEnMochila, vpMochila, valorMochila
 
+def exhaustivaBusqueda(lista,maxLista): 
+    lista_inicial = [-1] * len(lista[0])
+    algoritmo_backtracking(lista_inicial,maxLista, 0)
+    return valorCombinacion(lista,maxLista)
+
+#Recorre el subConjunto de combinaciones, encuentra el que tiene mayor valor y cumple con la restriccion propuesta
+def valorCombinacion(lista, maxLista):
+  mayValor = 0 
+  totPesoVol = 0
+  for i in range (0, len(subConjunto)):
+    valorMochila = 0 
+    vpMochila = 0
+    LocElemMochila = []
+    for j in range (0, len(lista[0])):
+      if subConjunto[i][j] == 1:
+        vpMochila += lista[1][j]
+        valorMochila += lista[2][j]
+        LocElemMochila.append([lista[0][j], lista[1][j], lista[2][j]])
+    if (vpMochila <= maxLista):
+      if (valorMochila > mayValor):
+        mayValor = valorMochila
+        totPesoVol = vpMochila
+        elementosEnMochila = LocElemMochila[:]
+  return elementosEnMochila, totPesoVol, mayValor
+
+#Genera todas las combinaciones posibles de elementos, mediante recursividad, las guarda en un lista 'subConjunto'
+def algoritmo_backtracking(lista_inicial, maxLista, i):
+    if i == len(lista_inicial):
+        subConjunto.append(lista_inicial[:])
+        return
+
+    lista_inicial[i] = 0
+    algoritmo_backtracking(lista_inicial,maxLista, i + 1)
+
+    lista_inicial[i] = 1
+    algoritmo_backtracking(lista_inicial,maxLista, i + 1)
+
 # Main
 if len(sys.argv) != 5 or sys.argv[1] != "-b" or sys.argv[3] != "-l":
   print("python tp2.py -b <tipo_busqueda> -l <lista_actual>")
@@ -43,7 +80,8 @@ elif sys.argv[4] != '1' and sys.argv[4] != '2':
 lista_1 = [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10], [150, 325, 600, 805, 430, 1200, 770, 60, 930, 353], [20, 40, 50, 36, 25, 64, 54, 18, 46, 28]] #pos, cm³, $
 maxLista_1 = 4200 #cm³
 lista_2 = [[1, 2, 3], [1800, 600, 1200], [72, 36, 60]] #pos, grs., $
-maxLista_2 = 3600 #grs.
+maxLista_2 = 3000 #grs.
+subConjunto = []
 
 if sys.argv[4] == '1':
   lista = lista_1
@@ -59,9 +97,7 @@ elif sys.argv[4] == '2':
 elementosEnMochila = []
 
 if sys.argv[2] == '1': #Búsqueda exhaustiva
-  #Sacar el exit cuando se complete esta sección
-  print("Completar esta sección")
-  sys.exit(1)
+  elementosEnMochila, vpMochila, valorMochila = exhaustivaBusqueda(lista, maxLista)
 elif sys.argv[2] == '2': #Búsqueda greedy (golosa)
   elementosEnMochila, vpMochila, valorMochila = greedyBusqueda(lista, maxLista)
 
