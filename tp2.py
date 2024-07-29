@@ -7,7 +7,7 @@ import sys
 def ordenaDesc(lista):
   for i in range(len(lista[0])):
     for j in range(i+1, len(lista[0])):
-      if lista[2][i] < lista[2][j]:
+      if (lista[2][i] / lista[1][i]) < (lista[2][j] / lista[1][j]):
         #invierte la posición de ambos valores
         lista[0][i], lista[0][j] = lista[0][j], lista[0][i]
         lista[1][i], lista[1][j] = lista[1][j], lista[1][i]
