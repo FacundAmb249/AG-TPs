@@ -16,7 +16,7 @@ if (sys.argv[1] != "-h" and sys.argv[1] != "-g") :
 
 ciudades, distancias = cargar_distancias()
 
-#Agregar menu para elegir la ciudad de partida. indice_ciudad de la ciudad de partida
+#Agregar menu para elegir la ciudad de partida. origen de la ciudad de partida
 
 if sys.argv[1] == "-h":
     if sys.argv[2] == "-o":
@@ -26,4 +26,4 @@ if sys.argv[1] == "-h":
         z = metodo_heuristico_sin_origen 
 
 elif sys.argv[1] == "g":
-    x = metodo_genetico(distancias, ciudades, indice_ciudad)
+    x = metodo_genetico(distancias, ciudades, origen)
