@@ -1,9 +1,18 @@
 
 
-
-
-
 num_ciudades = 24
+
+def metodo_heuristico_sin_origen(distancias,ciudades):
+    menorDistTotal = 1000000 
+    menorRecorrido = []
+
+    for ciudad in range (len(ciudades)):
+        rec, distTotal = metodo_heuristico_con_origen(distancias,ciudades, ciudad)
+        if distTotal < menorDistTotal:
+            menorDistTotal = distTotal
+            menorRecorrido = rec
+
+    return menorRecorrido, menorDistTotal
 
 
 def metodo_heuristico_con_origen(distancias, ciudades, origen):
@@ -12,6 +21,7 @@ def metodo_heuristico_con_origen(distancias, ciudades, origen):
     count = 0
     ciudad = origen
     num_ciudades = len(ciudades)  
+    distTotal = 0
 
     # Marcamos la ciudad de origen como visitada
     ocupados[ciudad] = 1
@@ -31,6 +41,7 @@ def metodo_heuristico_con_origen(distancias, ciudades, origen):
 
         if ciudadCercana != -1:
             recorrido.append(ciudadCercana)  
+            distTotal += minDist
             ciudad = ciudadCercana  
             ocupados[ciudadCercana] = 1  
             count += 1  
@@ -40,7 +51,5 @@ def metodo_heuristico_con_origen(distancias, ciudades, origen):
     # Vuelve al origen
     recorrido.append(origen)
 
-    print("Recorrido completo:", recorrido)
-
-    return recorrido
+    return recorrido, distTotal
     

@@ -3,6 +3,7 @@ import csv
 from distancias import cargar_distancias
 from metodo_heuristico import metodo_heuristico_con_origen, metodo_heuristico_sin_origen
 from metodo_genetico import metodo_genetico
+from mapa import ruta_mapa
 
 #python3 tp3.py -h -o/so
 #python3 tp3.py -g  
@@ -17,14 +18,20 @@ if (sys.argv[1] != "-h" and sys.argv[1] != "-g") :
 
 ciudades, distancias = cargar_distancias()
 
-#Agregar menu para elegir la ciudad de partida. origen de la ciudad de partida
-
 if sys.argv[1] == "-h":
     if sys.argv[2] == "-o":
-        z = metodo_heuristico_con_origen(distancias,ciudades,0) 
+        print("Ingrese el origen del recorrido, 1-24") 
+        origen = int(input())
+        origen = origen - 1
+        recorrido, distancia = metodo_heuristico_con_origen(distancias,ciudades,origen) 
+        ruta_mapa(recorrido)
+        print(distancia)
 
     elif sys.argv[2] == "-so":
-        z = metodo_heuristico_sin_origen 
+        recorrido, distancia = metodo_heuristico_sin_origen(distancias,ciudades)
+        ruta_mapa(recorrido)
+        print(distancia)
+        print(recorrido)
 
 elif sys.argv[1] == "-g":
     x = metodo_genetico(distancias, ciudades, 0)
