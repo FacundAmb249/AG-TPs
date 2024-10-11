@@ -1,7 +1,3 @@
-#pasar la distancia desde la capital elegida a las otras (una fila de la matriz)
-
-#Cromosomas: permutaciones de 23 números naturales del 1 al 23 donde cada gen es una ciudad.
-
 import random
 
 #Funcion que transforma binario a decimal
@@ -67,7 +63,11 @@ cant_poblacion = 50 #N = 50 Número de cromosomas de las poblaciones.
 cant_genes = len(bin(2**30-1))-2 #-2 para quitarle el 0b al principio
 probabilidad_crossover = 0
 probabilidad_mutacion = 0
-maxiteraciones = 100 #M = 200 Cantidad de ciclos.
+maxiteraciones = 200 #M = 200 Cantidad de ciclos.
+
+#pasar la distancia desde la capital elegida a las otras (una fila de la matriz)
+
+#Cromosomas: permutaciones de 23 números naturales del 1 al 23 donde cada gen es una ciudad.
 
 poblacion = []
 cromosoma = []

@@ -2,8 +2,7 @@ import sys
 import csv
 from distancias import cargar_distancias
 
-
-# python3 tp3.py -h -o/so
+#python3 tp3.py -h -o/so
 #python3 tp3.py -g  
 
 #Validacion de menu 
@@ -14,10 +13,7 @@ if (sys.argv[1] != "-h" and sys.argv[1] != "-g") :
     print("python main.py -g : metodo genetico")
     sys.exit(1)
 
-
 ciudades, distancias = cargar_distancias()
-
-
 
 if sys.argv[1] == "h":
     if sys.argv[2] == "o":
@@ -28,12 +24,3 @@ if sys.argv[1] == "h":
 
 elif sys.argv[1] == "g":
     x = metodo_genetico
-
-
-
-
-
-
-
-
-
