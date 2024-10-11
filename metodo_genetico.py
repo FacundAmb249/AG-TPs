@@ -105,7 +105,7 @@ def metodo_genetico(distancias, ciudades):
     probabilidad_crossover = 0.7 #A criterio
     probabilidad_mutacion = 0.2 #A criterio
     maxiteraciones = 200 #M = 200 Cantidad de ciclos.
-    num_capitales = 23 #Cromosomas: permutaciones de 23 números naturales del 1 al 23 donde cada gen es una ciudad.
+    num_capitales = 24 #Cromosomas: permutaciones de 23 números naturales del 1 al 23 donde cada gen es una ciudad.
 
     #Pasar la distancia desde la capital elegida a las otras (una fila de la matriz)
 
