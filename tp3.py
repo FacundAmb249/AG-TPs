@@ -1,6 +1,7 @@
 import sys
 import csv
 from distancias import cargar_distancias
+from metodo_heuristico import metodo_heuristico_con_origen
 
 #python3 tp3.py -h -o/so
 #python3 tp3.py -g  
@@ -15,9 +16,11 @@ if (sys.argv[1] != "-h" and sys.argv[1] != "-g") :
 
 ciudades, distancias = cargar_distancias()
 
-if sys.argv[1] == "h":
-    if sys.argv[2] == "o":
-        z = metodo_heuristico 
+
+
+if sys.argv[1] == "-h":
+    if sys.argv[2] == "-o":
+        z = metodo_heuristico_con_origen(distancias,ciudades,0) 
 
     elif sys.argv[2] == "so":
         z = metodo_heuristico_sin_origen 
