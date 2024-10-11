@@ -1,9 +1,6 @@
 #pasar la distancia desde la capital elegida a las otras (una fila de la matriz)
 
-#N = 50 Número de cromosomas de las poblaciones.
-#M = 200 Cantidad de ciclos.
 #Cromosomas: permutaciones de 23 números naturales del 1 al 23 donde cada gen es una ciudad.
-#Crossover cíclico. (Intro a AG cont, p. 6)
 
 import random
 
@@ -30,6 +27,28 @@ def mutacion (hijo):
         hijo = hijo[:punto1] + hijo[punto1:punto2][::-1] + hijo[punto2:]
     return hijo
 
+def crossover_ciclico(padre1, padre2):
+    #(Intro a AG cont, p. 6)
+    length = len(padre1)
+    hijo = [None] * length
+    visitado = [False] * length  #Índices visitados
+
+    #Elige de un índice inicial aleatorio
+    indice_uno = random.randint(0, length - 1)
+
+    indice_actual = indice_uno
+    while not visitado[indice_actual]:
+        hijo[indice_actual] = padre1[indice_actual]
+        visitado[indice_actual] = True
+
+        indice_actual = padre2.index(padre1[indice_actual])
+
+    for i in range(length):
+        if hijo[i] is None:
+            hijo[i] = padre2[i]
+
+    return hijo
+
 #Funcion que selecciona un cromosoma de la poblacion mediante el metodo del torneo
 def torneo(fitnessPoblacion,poblacion):
     global cant_poblacion
@@ -41,3 +60,14 @@ def torneo(fitnessPoblacion,poblacion):
         if max == [] or fitnessPoblacion[poblacion.index(cromosomas_seleccionados[i])] > fitnessPoblacion[poblacion.index(max)]:
             max = cromosomas_seleccionados[i]
     return max
+
+#main
+#Variables
+cant_poblacion = 50 #N = 50 Número de cromosomas de las poblaciones.
+cant_genes = len(bin(2**30-1))-2 #-2 para quitarle el 0b al principio
+probabilidad_crossover = 0
+probabilidad_mutacion = 0
+maxiteraciones = 100 #M = 200 Cantidad de ciclos.
+
+poblacion = []
+cromosoma = []
