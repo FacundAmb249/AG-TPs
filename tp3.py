@@ -13,16 +13,17 @@ if (sys.argv[1] != "-h" and sys.argv[1] != "-g") :
     print("Opciones invalidas, ingrese alguna de las siguientes opciones")
     print("python main.py -h -o : metodo heuristico con origen")
     print("python main.py -h -so : metodo heuristico sin origen")
-    print("python main.py -g : metodo genetico")
+    print("python main.py -g -o : metodo genetico")
     sys.exit(1)
 
 ciudades, distancias = cargar_distancias()
+if sys.argv[2] == "-o":
+    print("Ingrese el origen del recorrido, 1-24") 
+    origen = int(input())
+    origen = origen - 1
 
 if sys.argv[1] == "-h":
     if sys.argv[2] == "-o":
-        print("Ingrese el origen del recorrido, 1-24") 
-        origen = int(input())
-        origen = origen - 1
         recorrido, distancia = metodo_heuristico_con_origen(distancias,ciudades,origen) 
         ruta_mapa(recorrido)
         print(distancia)
@@ -33,5 +34,5 @@ if sys.argv[1] == "-h":
         print(distancia)
         print(recorrido)
 
-elif sys.argv[1] == "-g":
-    x = metodo_genetico(distancias, ciudades, 0)
+elif (sys.argv[1] == "-g") and (sys.argv[2] == "-o"):
+    recorrido, distancia = metodo_genetico(distancias, ciudades, origen)
