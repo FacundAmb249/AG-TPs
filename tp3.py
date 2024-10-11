@@ -17,13 +17,13 @@ if (sys.argv[1] != "-h" and sys.argv[1] != "-g") :
     sys.exit(1)
 
 ciudades, distancias = cargar_distancias()
-if sys.argv[2] == "-o":
-    print("Ingrese el origen del recorrido, 1-24") 
-    origen = int(input())
-    origen = origen - 1
 
 if sys.argv[1] == "-h":
     if sys.argv[2] == "-o":
+        print("Ingrese el origen del recorrido, 1-24") 
+        origen = int(input())
+        origen = origen - 1
+
         recorrido, distancia = metodo_heuristico_con_origen(distancias,ciudades,origen) 
         ruta_mapa(recorrido)
         print(distancia)
@@ -34,5 +34,5 @@ if sys.argv[1] == "-h":
         print(distancia)
         print(recorrido)
 
-elif (sys.argv[1] == "-g") and (sys.argv[2] == "-o"):
-    recorrido, distancia = metodo_genetico(distancias, ciudades, origen)
+elif sys.argv[1] == "-g":
+    recorrido, distancia = metodo_genetico(distancias, ciudades)
