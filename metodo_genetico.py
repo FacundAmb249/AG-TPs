@@ -97,22 +97,19 @@ def generar_nueva_poblacion(poblacion, fitnessPoblacion):
         poblacion2.append(hijo2)
     return poblacion2
 
-def metodo_genetico(distancias, ciudades, indice_ciudad):
+def metodo_genetico(distancias, ciudades, origen):
     #Variables
     cant_poblacion = 50 #N = 50 Número de cromosomas de las poblaciones.
     cant_genes = len(bin(24))-2 #-2 para quitarle el 0b al principio
     probabilidad_crossover = 0 #A criterio
     probabilidad_mutacion = 0 #A criterio
     maxiteraciones = 200 #M = 200 Cantidad de ciclos.
-    num_capitales = 23
-    ciudad_inicial = ciudades[indice_ciudad]
-    ciudades.pop(indice_ciudad)
-    for i in range(len(distancias)):
-        distancias[i].pop(indice_ciudad)
+    num_capitales = 23 #Cromosomas: permutaciones de 23 números naturales del 1 al 23 donde cada gen es una ciudad.
+    ciudad_inicial = ciudades[origen]
+    ciudades.pop(origen)
+    distancias[i].pop(origen) for i in range(len(distancias))
 
     #Pasar la distancia desde la capital elegida a las otras (una fila de la matriz)
-
-    #Cromosomas: permutaciones de 23 números naturales del 1 al 23 donde cada gen es una ciudad.
 
     poblacion = []
     cromosoma = []
@@ -125,3 +122,5 @@ def metodo_genetico(distancias, ciudades, indice_ciudad):
         fitnessPoblacion = []
         fitnessPoblacion = fitness(poblacion)
         poblacion = generar_nueva_poblacion(poblacion, fitnessPoblacion)
+
+    return poblacion
