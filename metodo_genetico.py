@@ -20,44 +20,104 @@ def mutacion(hijo):
         hijo[punto_m] = random.randint(0, num_capitales - 1) #Vuelve a convertir a cadena
     return hijo
 
-def crossover_ciclico(padre1, padre2):
-    num = random.randrange(0,100)
-    print("padre1:", padre1)
-    print("padre2:", padre2)
-    if num > (probabilidad_crossover*100):
-        hijo1 = padre1
-        hijo2 = padre2
-    else:
-        length = len(padre1)
-        hijo1 = [None] * length
-        hijo2 = [None] * length
-        #Índices visitados
-        visitado1 = [False] * length
-        visitado2 = [False] * length
+def fillNoneWithSwappedValue(arr1 ,arr2 ,final1 ,final2 ):
+    for a in range(0,len(arr1)):
+        if final1[a] == None:
+            final1[a] = arr2[a]
+        if final2[a] == None:
+            final2[a] = arr1[a]
+    return final1,final2
 
-        #Elige de un índice inicial aleatorio
-        indice_uno = random.randint(0, length - 1)
+def indexOf(arr,x):
+    for a in range(0,len(arr)):
+        if arr[a] == x:
+            return a
+    return -1
 
-        indice_actual1 = indice_uno
-        while not visitado1[indice_actual1]:
-            hijo1[indice_actual1] = padre1[indice_actual1]
-            visitado1[indice_actual1] = True
-            indice_actual1 = padre2.index(padre1[indice_actual1])
 
-        indice_actual2 = indice_uno
-        while not visitado2[indice_actual2]:
-            hijo2[indice_actual2] = padre2[indice_actual2]
-            visitado2[indice_actual2] = True
-            indice_actual2 = padre1.index(padre2[indice_actual2])
+def crossoverOperator( padre1, padre2 ):
+    hijo1 = [None] * len(padre1)
+    hijo2 = [None] * len(padre2)
+    size1 = 1
+    size2 = 1
 
-        for i in range(length):
-            if hijo1[i] is None:
-                hijo1[i] = padre2[i]
-            if hijo2[i] is None:
-                hijo2[i] = padre1[i]
-    print("hijo1:", hijo1)
-    print("hijo2:", hijo2)
-    return hijo1, hijo2
+    initalSelected = padre1[0]
+    hijo1[0] = padre1[0]
+    latestUpdated2 = padre2[0]
+    check = 1
+
+    while size1 < len(padre1) or size2 < len(padre2):
+        if latestUpdated2 == initalSelected:
+            index2 = indexOf(padre2,latestUpdated2)
+            hijo2[index2] = padre2[index2]
+            ans1,ans2 = fillNoneWithSwappedValue(padre1, padre2, hijo1, hijo2)
+            hijo1 = ans1
+            hijo2 = ans2
+            size1 = len(padre1)
+            size2 = len(padre2)
+            check = 0
+        else:
+            index2 = indexOf(padre2,latestUpdated2)
+            hijo2[index2] = padre2[index2]
+            size2 += 1
+            index1 = indexOf(padre1,padre2[index2])
+            hijo1[index1] = padre1[index1]
+            size1 += 1
+            latestUpdated2 = padre2[index1]
+    if check:
+        index2 = indexOf(padre2, latestUpdated2)
+        hijo2[index2] = padre2[index2]
+    return hijo1,hijo2
+
+def findUnusedIndexValues(parent,offspring):
+    res = list()
+    for a in parent:
+        if indexOf(offspring,a) == -1:
+            res.append(a)
+    return res
+
+def crossover_ciclico( padre1, padre2 ):
+    print('hellol shakoob')
+    hijo1 = [None] * len(padre1)
+    hijo2 = [None] * len(padre2)
+    i1 = 0
+    i2 = 0
+    initalSelected = padre1[0]
+    hijo1[i1] = padre2[0]
+    i1 += 1
+    # latestUpdated2 = padre2[0]
+    check = 1
+
+    while i1 < len(padre1)-1 and i2 < len(padre2)-1:
+        index1 = indexOf(padre1,hijo1[i1-1])
+        index1 = indexOf(padre1,padre2[index1])
+        latestUpdated2 = padre2[index1]
+        if latestUpdated2 == initalSelected:
+            hijo2[i2] = latestUpdated2
+            i2 += 1
+            # print("cycle detected")
+            check = 0
+            res1 = findUnusedIndexValues(padre1,hijo1)
+            res2 = findUnusedIndexValues(padre2,hijo2)
+            # print(res1,res2)
+            ans1,ans2 = crossover_ciclico(res1, res2)
+            hijo1[i1:] = ans1
+            hijo2[i2:] = ans2
+            check = 0
+            break
+        else:
+            hijo2[i2] = padre2[index1]
+            i2 += 1
+            index1 = indexOf(padre1,hijo2[i2-1])
+            hijo1[i1] = padre2[index1]
+            i1 += 1
+    if check:
+        index1 = indexOf(padre1, hijo1[i1 - 1])
+        index1 = indexOf(padre1, padre2[index1])
+        latestUpdated2 = padre2[index1]
+        hijo2[i2] = latestUpdated2
+        i2 += 1
+    return hijo1,hijo2
 
 #Funcion que calcula el fitness de cada uno de los cromosomas de la poblacion. Agrega las distancia recorrida a un arreglo
 def fitness(poblacion, distancias):
