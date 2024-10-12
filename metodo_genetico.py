@@ -52,9 +52,10 @@ def crossover_ciclico (padre1, padre2):
 
     return hijo1, hijo2
 
-#Funcion que realiza la mutacion de un cromosoma mediante la inversion de un segmento del cromosoma
+#Funcion que realiza la mutacion de un cromosoma, inverte dos cromosomas random de lugar
 def mutacion (hijo): 
     index = random.sample(hijo,2)
+    hijo[index[0]], hijo[index[1]] = hijo[index[1]], hijo[index[0]]
     return hijo
 
 #Funcion que calcula el fitness de cada uno de los cromosomas de la poblacion, en este caso el fitness es igual a la funcion objetivo
