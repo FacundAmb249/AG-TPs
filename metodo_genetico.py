@@ -3,11 +3,10 @@ import random
 
 #VARIABLE INICIALES
 cant_poblacion = 50
-ciclos = 200
 cant_genes = 24
-probabilidad_crossover = 0
-probabilidad_mutacion = 0
-maxiteraciones = 100
+probabilidad_crossover = 0.7
+probabilidad_mutacion = 0.2
+maxiteraciones = 200
 
 poblacion = []
 cromosoma = []
@@ -149,6 +148,6 @@ for iteraciones in range(maxiteraciones):
     poblacion = generar_nueva_poblacion(poblacion, fitnessPoblacion, boolElitismo, boolRuleta)
 
 
-print("cromosoma con valor maximo:")
+print("cromosoma con mejor distancia:")
 print(maxCromosoma)
 
