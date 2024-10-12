@@ -72,6 +72,14 @@ def ruleta(fitness, poblacion):
         acum += fitness[i]
     return poblacion[indiceCromosoma]
 
+#Funcion que calcula el fitness de cada uno de los cromosomas de la poblacion. Agrega las distancia recorrida a un arreglo
+def fitness(poblacion, distancias):
+    fitnessPoblacion = []
+    for cromosoma in poblacion:
+        distancia = calcular_distancia(cromosoma, distancias)
+        fitnessPoblacion.append(distancia)
+    return fitnessPoblacion
+
 #Funcion que selecciona un cromosoma de la poblacion mediante el metodo del torneo
 def torneo(fitnessPoblacion,poblacion):
     global cant_poblacion
