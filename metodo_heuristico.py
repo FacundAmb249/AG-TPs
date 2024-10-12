@@ -6,7 +6,7 @@ def metodo_heuristico_sin_origen(distancias,ciudades):
     menorDistTotal = 1000000 
     menorRecorrido = []
 
-    for ciudad in range (len(ciudades)):
+    for ciudad in range (num_ciudades):
         rec, distTotal = metodo_heuristico_con_origen(distancias,ciudades, ciudad)
         if distTotal < menorDistTotal:
             menorDistTotal = distTotal
@@ -47,9 +47,10 @@ def metodo_heuristico_con_origen(distancias, ciudades, origen):
             count += 1  
         else:
             break  
-
-    # Vuelve al origen
+    indicePrevCiudad = recorrido[len(recorrido) - 1]
+    distTotal += distancias[indicePrevCiudad][origen]
     recorrido.append(origen)
+
 
     return recorrido, distTotal
     

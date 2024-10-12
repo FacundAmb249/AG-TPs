@@ -20,9 +20,8 @@ ciudades, distancias = cargar_distancias()
 
 if sys.argv[1] == "-h":
     if sys.argv[2] == "-o":
-        print("Ingrese el origen del recorrido, 1-24") 
+        print("Ingrese el origen del recorrido, 0-23") 
         origen = int(input())
-        origen = origen - 1
 
         recorrido, distancia = metodo_heuristico_con_origen(distancias,ciudades,origen) 
         ruta_mapa(recorrido)
@@ -33,6 +32,14 @@ if sys.argv[1] == "-h":
         ruta_mapa(recorrido)
         print(distancia)
         print(recorrido)
+        ciudadTestrecorrido = []
+        for i in range(0,24):
+            ciudadindex = recorrido[i]
+            c = ciudades[ciudadindex]
+            ciudadTestrecorrido.append(c)
+        print(ciudadTestrecorrido)
+
+
 
 elif sys.argv[1] == "-g":
     recorrido, distancia = metodo_genetico(distancias, ciudades)
