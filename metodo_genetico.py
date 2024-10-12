@@ -1,138 +1,78 @@
+import sys
 import random
+import matplotlib.pyplot as plt
+import pandas as pd
 
-#Funcion que crea la poblacion inicial en base a la cantidad de poblacion inicial y cantidad de genes que van a tener los cromosomas
-def crear_poblacion(cant_poblacion, num_capitales):
+#VARIABLE INICIALES
+cant_poblacion = 50
+ciclos = 200
+cant_genes = 24
+probabilidad_crossover = 0
+probabilidad_mutacion = 0
+maxiteraciones = 100
+
+poblacion = []
+cromosoma = []
+
+datos_valores = []
+datos_poblacionales = []
+maxCromosoma = []
+
+#Funcion que crea la poblacion inicial en base a la cantidad de poblacion inicial 
+#y cantidad de genes que van a tener los cromosomas
+
+def crear_poblacion(cant_poblacion, cant_genes):
     for _ in range(cant_poblacion):
-        cromosoma = list(range(num_capitales))
-        random.shuffle(cromosoma) #Mezcla para crear una nueva permutación
+        cromosoma = [random.randint(0, 1) for i in range(cant_genes)]
         poblacion.append(cromosoma)
     return poblacion
 
-#Funcion que realiza la mutacion de un cromosoma mediante la inversion de un segmento del cromosoma
-#Mutación binaria de un bit
-def mutacion(hijo):
+#Funcion que realiza el crossover entre dos cromosomas mediante el metodo de un punto de corte
+def crossover_ciclico (padre1, padre2):
     num = random.randrange(0,100)
-    if num < (probabilidad_mutacion*100):
-        punto_m = random.randint(0,num_capitales-1)
-        hijo_lista = list(hijo) #Convierte a lista para facilitar modificación
-        punto2 = random.randint(0,num_capitales-1)
-        hijo_lista[punto_m], hijo_lista[punto2] = hijo_lista[punto2], hijo_lista[punto_m]
-        hijo[punto_m] = random.randint(0, num_capitales - 1) #Vuelve a convertir a cadena
+    if num > (probabilidad_crossover*100):
+        hijo1 = padre1
+        hijo2 = padre2
+    else:
+        hijo1 = [-1] * len(padre2)
+        hijo2 = [-1] * len(padre2)
+        index = 0
+        while padre2[index] not in hijo1: 
+            hijo1.append(padre1[index])
+            index = padre1.index(padre2[index])
+            hijo1[index].append(padre1[index])
+            index += 1
+
+        index2 = 0
+        while padre1[index2] not in hijo2:
+            hijo1.append(padre1[index2])
+            index2 = padre1.index(padre2[index2])
+            hijo1[index2].append(padre1[index2])
+            index2 += 1
+
+    return hijo1, hijo2
+
+#Funcion que realiza la mutacion de un cromosoma mediante la inversion de un segmento del cromosoma
+def mutacion (hijo): 
+    index = random.sample(hijo,2)
     return hijo
 
-def fillNoneWithSwappedValue(arr1 ,arr2 ,final1 ,final2 ):
-    for a in range(0,len(arr1)):
-        if final1[a] == None:
-            final1[a] = arr2[a]
-        if final2[a] == None:
-            final2[a] = arr1[a]
-    return final1,final2
-
-def indexOf(arr,x):
-    for a in range(0,len(arr)):
-        if arr[a] == x:
-            return a
-    return -1
+#Funcion que calcula el fitness de cada uno de los cromosomas de la poblacion, en este caso el fitness es igual a la funcion objetivo
+def fitness(poblacion):
+    print("test")
 
 
-def crossoverOperator( padre1, padre2 ):
-    hijo1 = [None] * len(padre1)
-    hijo2 = [None] * len(padre2)
-    size1 = 1
-    size2 = 1
-
-    initalSelected = padre1[0]
-    hijo1[0] = padre1[0]
-    latestUpdated2 = padre2[0]
-    check = 1
-
-    while size1 < len(padre1) or size2 < len(padre2):
-        if latestUpdated2 == initalSelected:
-            index2 = indexOf(padre2,latestUpdated2)
-            hijo2[index2] = padre2[index2]
-            ans1,ans2 = fillNoneWithSwappedValue(padre1, padre2, hijo1, hijo2)
-            hijo1 = ans1
-            hijo2 = ans2
-            size1 = len(padre1)
-            size2 = len(padre2)
-            check = 0
-        else:
-            index2 = indexOf(padre2,latestUpdated2)
-            hijo2[index2] = padre2[index2]
-            size2 += 1
-            index1 = indexOf(padre1,padre2[index2])
-            hijo1[index1] = padre1[index1]
-            size1 += 1
-            latestUpdated2 = padre2[index1]
-    if check:
-        index2 = indexOf(padre2, latestUpdated2)
-        hijo2[index2] = padre2[index2]
-    return hijo1,hijo2
-
-def findUnusedIndexValues(parent,offspring):
-    res = list()
-    for a in parent:
-        if indexOf(offspring,a) == -1:
-            res.append(a)
-    return res
-
-def crossover_ciclico( padre1, padre2 ):
-    print('hellol shakoob')
-    hijo1 = [None] * len(padre1)
-    hijo2 = [None] * len(padre2)
-    i1 = 0
-    i2 = -1
-    initalSelected = padre1[0]
-    hijo1[i1] = padre2[0]
-    i1 += 1
-    # latestUpdated2 = padre2[0]
-    check = 1
-
-    while i1 < len(padre1)-1 and i2 < len(padre2) -1:
-        index1 = indexOf(padre1,hijo1[i1-1])
-        index1 = indexOf(padre1,padre2[index1])
-        latestUpdated2 = padre2[index1]
-        if latestUpdated2 == initalSelected:
-            hijo2[i2] = latestUpdated2
-            i2 += 1
-            # print("cycle detected")
-            check = 0
-            res1 = findUnusedIndexValues(padre1,hijo1)
-            res2 = findUnusedIndexValues(padre2,hijo2)
-            # print(res1,res2)
-            ans1,ans2 = crossover_ciclico(res1, res2)
-            hijo1[i1:] = ans1
-            hijo2[i2:] = ans2
-            check = 0
-            break
-        else:
-            hijo2[i2] = padre2[index1]
-            i2 += 1
-            index1 = indexOf(padre1,hijo2[i2-1])
-            hijo1[i1] = padre2[index1]
-            i1 += 1
-    if check:
-        index1 = indexOf(padre1, hijo1[i1 - 1])
-        index1 = indexOf(padre1, padre2[index1])
-        latestUpdated2 = padre2[index1]
-        hijo2[i2] = latestUpdated2
-        i2 += 1
-    return hijo1,hijo2
-
-#Funcion que calcula el fitness de cada uno de los cromosomas de la poblacion. Agrega las distancia recorrida a un arreglo
-def fitness(poblacion, distancias):
-    fitnessPoblacion = []
-    for cromosoma in poblacion:
-        distancia = calcular_distancia(cromosoma, distancias)
-        fitnessPoblacion.append(distancia)
-    return fitnessPoblacion
-
-#Calcula distancia total del recorrido
-def calcular_distancia(cromosoma, distancias):
-    distancia_total = 0
-    for i in range(len(cromosoma)):
-        distancia_total += distancias[cromosoma[i]][cromosoma[(i + 1) % len(cromosoma)]]
-    return distancia_total
+#Funcion que selecciona un cromosoma de la poblacion mediante el metodo de la ruleta
+def ruleta(fitness, poblacion):
+    randomNum = random.random()
+    acum = 0
+    indiceCromosoma = 0
+    for i in range(len(fitness)):
+        if randomNum > acum and randomNum < (acum + fitness[i]):
+            indiceCromosoma = i
+            break  
+        acum += fitness[i]
+    return poblacion[indiceCromosoma]
 
 #Funcion que selecciona un cromosoma de la poblacion mediante el metodo del torneo
 def torneo(fitnessPoblacion,poblacion):
@@ -146,44 +86,93 @@ def torneo(fitnessPoblacion,poblacion):
             max = cromosomas_seleccionados[i]
     return max
 
-def generar_nueva_poblacion(poblacion, fitnessPoblacion):
-    poblacion2 = []
-    while len(poblacion2) < len(poblacion):
-        padre1 = torneo(fitnessPoblacion,poblacion)
-        padre2 = torneo(fitnessPoblacion,poblacion)
-        hijo1, hijo2 = crossover_ciclico(padre1, padre2)
+#Funcion que selecciona los dos cromosomas/20% con mayor valor de la poblacion
+def elitismo(poblacion,fitnessPoblacion):
+    #Obtengo los dos cromosomas con mayor valor
+    fitness_acomodado = sorted(fitnessPoblacion,reverse=True)
+    maximos = fitness_acomodado[:2]
+    cromosomas = []
+    for i in range(2):
+        indice = fitnessPoblacion.index(maximos[i])
+        cromosomas.append(poblacion[indice])
+    cromosoma1 = cromosomas[0]
+    cromosoma2 = cromosomas[1]
+    return cromosoma1, cromosoma2
+
+#Funcion que genera una nueva poblacion en base a la poblacion anterior y sus fitness aplicando o no elitismo y ruleta o torneo
+def generar_nueva_poblacion(poblacion, fitnessPoblacion, boolElitismo, boolRuleta):
+    global cant_poblacion
+    poblacion2= []
+    recorrido = (cant_poblacion//2)
+    if boolElitismo == True:
+        cromosoma1, cromosoma2 = elitismo(poblacion, fitnessPoblacion)
+        poblacion2.append(cromosoma1)
+        poblacion2.append(cromosoma2)
+        recorrido = ((cant_poblacion//2) -1)
+    for i in range(recorrido): 
+        if boolRuleta == True:
+            padre1 = ruleta(fitnessPoblacion,poblacion)
+            padre2 = ruleta(fitnessPoblacion,poblacion)
+        else: 
+            padre1 = torneo(fitnessPoblacion,poblacion)
+            padre2 = torneo(fitnessPoblacion,poblacion)
+        hijo1, hijo2 = crossover(padre1, padre2)
         hijo1 = mutacion(hijo1)
         hijo2 = mutacion(hijo2)
         poblacion2.append(hijo1)
         poblacion2.append(hijo2)
     return poblacion2
 
-def metodo_genetico(distancias, ciudades):
-    #Variables
-    global probabilidad_crossover, probabilidad_mutacion, cant_poblacion, num_capitales, poblacion, cromosoma
-    cant_poblacion = 50 #N = 50 Número de cromosomas de las poblaciones.
-    probabilidad_crossover = 0.7 #A criterio
-    probabilidad_mutacion = 0.2 #A criterio
-    maxiteraciones = 200 #M = 200 Cantidad de ciclos.
-    num_capitales = 24 #Cromosomas: permutaciones de 23 números naturales del 1 al 23 donde cada gen es una ciudad.
 
-    #Pasar la distancia desde la capital elegida a las otras (una fila de la matriz)
+#-----------------------------------------MAIN-----------------------------------------
 
-    poblacion = []
-    cromosoma = []
+if len(sys.argv) != 5 or sys.argv[1] != "-s" or sys.argv[3] != "-e":
+  print("Uso: python <nombre_archivo>.py -s <metodo_seleccion> -e <elitismo on/off>")
+  print("metodo seleccion: 1-ruleta, 2-torneo")
+  print("Elitismo: 0=off/desactivado, 1=on/activado")
+  sys.exit(1)
 
-    #Creacion de la poblacion
-    poblacion = crear_poblacion(cant_poblacion, num_capitales)
 
-    #iteraciones
-    for iteraciones in range(maxiteraciones):
-        fitnessPoblacion = []
-        fitnessPoblacion = fitness(poblacion, distancias)
-        poblacion = generar_nueva_poblacion(poblacion, fitnessPoblacion)
+metodo_seleccion = sys.argv[2]
+opcion_elitismo = sys.argv[4]
 
-    recorrido = min(poblacion, key=lambda cromosoma: calcular_distancia(cromosoma, distancias))
-    distancia = calcular_distancia(recorrido, distancias)
 
-    recorrido
-    print(recorrido, distancia)
-    return recorrido, distancia
+if metodo_seleccion == '1':
+    boolRuleta = True
+elif metodo_seleccion == '2':
+    boolRuleta = False
+
+if opcion_elitismo == '0':
+    boolElitismo = False
+elif opcion_elitismo == '1':
+    boolElitismo = True
+
+
+#VARIABLE INICIALES
+cant_poblacion = 10
+cant_genes = len(bin(2**30-1))-2 #-2 para quitarle el 0b al principio
+probabilidad_crossover = 0
+probabilidad_mutacion = 0
+maxiteraciones = 100
+
+poblacion = []
+cromosoma = []
+
+datos_valores = []
+datos_poblacionales = []
+maxCromosoma = []
+
+#Creacion de la poblacion
+crear_poblacion(cant_poblacion, cant_genes)
+
+#iteraciones
+for iteraciones in range(maxiteraciones):
+    fitnessPoblacion = []
+    fitnessPoblacion = fitness(poblacion)
+    poblacion = generar_nueva_poblacion(poblacion, fitnessPoblacion, boolElitismo, boolRuleta)
+
+
+print("cromosoma con valor maximo:")
+print(maxCromosoma)
+print(bin_to_dec(maxCromosoma))
+
