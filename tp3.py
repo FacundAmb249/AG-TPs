@@ -23,23 +23,21 @@ if sys.argv[1] == "-h":
         print("Ingrese el origen del recorrido, 0-23") 
         origen = int(input())
 
-        recorrido, distancia = metodo_heuristico_con_origen(distancias,ciudades,origen) 
-        ruta_mapa(recorrido)
-        print(distancia)
+        recorrido, distancia = metodo_heuristico_con_origen(distancias,ciudades,origen)
 
     elif sys.argv[2] == "-so":
         recorrido, distancia = metodo_heuristico_sin_origen(distancias,ciudades)
-        ruta_mapa(recorrido)
-        print(distancia)
-        print(recorrido)
-        ciudadTestrecorrido = []
-        for i in range(0,24):
-            ciudadindex = recorrido[i]
-            c = ciudades[ciudadindex]
-            ciudadTestrecorrido.append(c)
-        print(ciudadTestrecorrido)
-
 
 
 elif sys.argv[1] == "-g":
     recorrido, distancia = metodo_genetico(distancias, ciudades)
+
+ruta_mapa(recorrido)
+print(distancia)
+print(recorrido)
+ciudadTestrecorrido = []
+for i in range(0,24):
+    ciudadindex = recorrido[i]
+    c = ciudades[ciudadindex]
+    ciudadTestrecorrido.append(c)
+print(ciudadTestrecorrido)

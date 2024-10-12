@@ -81,14 +81,14 @@ def crossover_ciclico( padre1, padre2 ):
     hijo1 = [None] * len(padre1)
     hijo2 = [None] * len(padre2)
     i1 = 0
-    i2 = 0
+    i2 = -1
     initalSelected = padre1[0]
     hijo1[i1] = padre2[0]
     i1 += 1
     # latestUpdated2 = padre2[0]
     check = 1
 
-    while i1 < len(padre1)-1 and i2 < len(padre2)-1:
+    while i1 < len(padre1)-1 and i2 < len(padre2) -1:
         index1 = indexOf(padre1,hijo1[i1-1])
         index1 = indexOf(padre1,padre2[index1])
         latestUpdated2 = padre2[index1]
