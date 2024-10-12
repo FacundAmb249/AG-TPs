@@ -1,0 +1,67 @@
+import sys
+import os
+import copy
+from distancias import cargar_distancias
+
+
+#I have a list of distances to each city, 
+#Origen es un numero del 1-24
+
+num_ciudades = 24
+ciudades, distancias = cargar_distancias()
+
+
+#Sort distances of each city
+
+#Algoritmo simple de bubble sort que ordena las distancias de menor a mayor
+#@Param 1: Lista de distancias de todas las ciudades
+#@Param 2: Numero del 0-23 para referenciar la ciudad 
+def ordenaDistancias(distancias,ciudad):
+    distanciasOrdenadas = distancias[ciudad]
+    print(distanciasOrdenadas)
+    for i in range(0,num_ciudades):
+        for j in range(i+1,num_ciudades):
+            if int(distanciasOrdenadas[i]) > int(distanciasOrdenadas[j]):
+                aux = distanciasOrdenadas[j]
+                distanciasOrdenadas[j] = distanciasOrdenadas[i]
+                distanciasOrdenadas[i] = aux
+
+
+    print(distanciasOrdenadas)
+
+
+
+def metodo_heuristico_con_origen(distancias,origen):
+    ocupado = [0] * 24
+    recorrido = [] 
+    count = 0
+    distanciasOriginales = copy.deepcopy(distancias)
+
+    #Agrego los valores del origen
+    distancias[origen].sort()
+    recorrido.append(origen)
+    ocupado[origen] = 1
+    indexProxCiudad = distanciasOriginales[origen].index(distancias[origen][1])
+    print(num_ciudades)
+
+    for i in range(0, num_ciudades-1):
+        print("here")
+        distancias[indexProxCiudad].sort()
+        for j in range(1,num_ciudades):
+            if ocupado[indexProxCiudad] == 0 :  
+                print("xxx")
+                indexProxCiudad = distanciasOriginales[indexProxCiudad].index(distancias[indexProxCiudad][j])
+                recorrido.append(indexProxCiudad)
+                ocupado[indexProxCiudad] = 1
+                break
+
+    print("recorrido",recorrido)
+    print("ocupados",ocupado)
+
+
+
+
+
+
+
+

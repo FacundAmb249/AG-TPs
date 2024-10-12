@@ -12,3 +12,6 @@ def cargar_distancias():
             distancias.append([0 if cell == '' else int(cell) for cell in line[1:]])
 
     return ciudades, distancias
+
+
+
