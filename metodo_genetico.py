@@ -33,19 +33,27 @@ def crossover_ciclico (padre1, padre2):
     else:
         hijo1 = [-1] * len(padre2)
         hijo2 = [-1] * len(padre2)
+
+        #Asigno los primeros valores de los hijos 
+        hijo1[0] = padre1[0]
+        hijo2[0] = padre2[0]
+
         index = 0
         while padre2[index] not in hijo1: 
-            hijo1.append(padre1[index])
             index = padre1.index(padre2[index])
-            hijo1[index].append(padre1[index])
-            index += 1
+            hijo1[index] = padre1[index]
 
         index2 = 0
         while padre1[index2] not in hijo2:
-            hijo1.append(padre1[index2])
-            index2 = padre1.index(padre2[index2])
-            hijo1[index2].append(padre1[index2])
-            index2 += 1
+            hijo2[index2] = padre2[index2]
+            index2 = padre2.index(padre1[index2])
+
+        for i in range(len(padre1)):
+            if hijo1[i] == -1:
+                hijo1[i] = padre2[i]
+            if hijo2[i] == -1:
+                hijo2[i] = padre1[i]
+
 
     return hijo1, hijo2
 
@@ -131,31 +139,23 @@ def generar_nueva_poblacion(poblacion, fitnessPoblacion, boolElitismo, boolRulet
 
 
 
-metodo_seleccion = sys.argv[2]
-opcion_elitismo = sys.argv[4]
+padre1 = [9,8,2,1,7,4,5,10,6,3]
+padre2 = [1,2,3,4,5,6,7,8,9,10]
+hijo1,hijo2 = crossover_ciclico(padre1,padre2)
+print("hijo1",hijo1)
+print("hijo2",hijo2)
 
 
-if metodo_seleccion == '1':
-    boolRuleta = True
-elif metodo_seleccion == '2':
-    boolRuleta = False
-
-if opcion_elitismo == '0':
-    boolElitismo = False
-elif opcion_elitismo == '1':
-    boolElitismo = True
-
-
-#Creacion de la poblacion
-crear_poblacion(cant_poblacion, cant_genes)
-
-#iteraciones
-for iteraciones in range(maxiteraciones):
-    fitnessPoblacion = []
-    fitnessPoblacion = fitness(poblacion)
-    poblacion = generar_nueva_poblacion(poblacion, fitnessPoblacion, boolElitismo, boolRuleta)
-
-
-print("cromosoma con mejor distancia:")
-print(maxCromosoma)
+# #Creacion de la poblacion
+# crear_poblacion(cant_poblacion, cant_genes)
+#
+# #iteraciones
+# for iteraciones in range(maxiteraciones):
+#     fitnessPoblacion = []
+#     fitnessPoblacion = fitness(poblacion)
+#     poblacion = generar_nueva_poblacion(poblacion, fitnessPoblacion, boolElitismo, boolRuleta)
+#
+#
+# print("cromosoma con mejor distancia:")
+# print(maxCromosoma)
 
