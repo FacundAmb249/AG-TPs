@@ -1,7 +1,5 @@
 import sys
 import random
-import matplotlib.pyplot as plt
-import pandas as pd
 
 #VARIABLE INICIALES
 cant_poblacion = 50
@@ -117,21 +115,13 @@ def generar_nueva_poblacion(poblacion, fitnessPoblacion, boolElitismo, boolRulet
         else: 
             padre1 = torneo(fitnessPoblacion,poblacion)
             padre2 = torneo(fitnessPoblacion,poblacion)
-        hijo1, hijo2 = crossover(padre1, padre2)
+        hijo1, hijo2 = crossover_ciclico(padre1, padre2)
         hijo1 = mutacion(hijo1)
         hijo2 = mutacion(hijo2)
         poblacion2.append(hijo1)
         poblacion2.append(hijo2)
     return poblacion2
 
-
-#-----------------------------------------MAIN-----------------------------------------
-
-if len(sys.argv) != 5 or sys.argv[1] != "-s" or sys.argv[3] != "-e":
-  print("Uso: python <nombre_archivo>.py -s <metodo_seleccion> -e <elitismo on/off>")
-  print("metodo seleccion: 1-ruleta, 2-torneo")
-  print("Elitismo: 0=off/desactivado, 1=on/activado")
-  sys.exit(1)
 
 
 metodo_seleccion = sys.argv[2]
@@ -149,20 +139,6 @@ elif opcion_elitismo == '1':
     boolElitismo = True
 
 
-#VARIABLE INICIALES
-cant_poblacion = 10
-cant_genes = len(bin(2**30-1))-2 #-2 para quitarle el 0b al principio
-probabilidad_crossover = 0
-probabilidad_mutacion = 0
-maxiteraciones = 100
-
-poblacion = []
-cromosoma = []
-
-datos_valores = []
-datos_poblacionales = []
-maxCromosoma = []
-
 #Creacion de la poblacion
 crear_poblacion(cant_poblacion, cant_genes)
 
@@ -175,5 +151,4 @@ for iteraciones in range(maxiteraciones):
 
 print("cromosoma con valor maximo:")
 print(maxCromosoma)
-print(bin_to_dec(maxCromosoma))
 
