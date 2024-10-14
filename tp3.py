@@ -5,16 +5,13 @@ from metodo_heuristico import metodo_heuristico_con_origen, metodo_heuristico_si
 from metodo_genetico import metodo_genetico
 from mapa import ruta_mapa
 
-#python3 tp3.py -h -o/so
-#python3 tp3.py -g  
-
 #Validacion de menu 
 def info():
     print("Opciones invalidas, ingrese alguna de las siguientes opciones")
-    print("python main.py -h -co : metodo heuristico con origen")
-    print("python main.py -h -so : metodo heuristico sin origen")
-    print("python main.py -g -ce : metodo genetico con elitismo")
-    print("python main.py -g -se : metodo genetico sin elitismo")
+    print("python tp3.py -h -co : metodo heuristico con origen")
+    print("python tp3.py -h -so : metodo heuristico sin origen")
+    print("python tp3.py -g -ce : metodo genetico con elitismo")
+    print("python tp3.py -g -se : metodo genetico sin elitismo")
     sys.exit(1)
 
 if (sys.argv[1] != "-h" and sys.argv[1] != "-g") :

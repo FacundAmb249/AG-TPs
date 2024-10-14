@@ -1,5 +1,7 @@
 import sys
 import random
+#Funciones obsoletas: generar_nueva_poblacion
+#Variables obsoletas: fitness_poblacion
 
 #VARIABLE INICIALES
 cant_poblacion = 50
@@ -25,12 +27,13 @@ def crear_poblacion(cant_poblacion, cant_genes):
         poblacion.append(cromosoma)
     return poblacion
 
-def calcular_distancia(cant_poblacion, ciudades, distancias):
+def calcular_distancias(cant_poblacion, cant_genes, distancias):
     for i in range(cant_poblacion):
         dist = 0
-        for j in range(len(ciudades)-1):
+        for j in range(cant_genes):
             dist = dist + distancias[poblacion[i][j]][poblacion[i][j + 1]]
-    return dist
+        distancia_recorrido[i] = dist
+    return distancia_recorrido
 
 #Funcion que realiza el crossover entre dos cromosomas mediante el metodo de un punto de corte
 def crossover_ciclico (padre1, padre2):
@@ -72,7 +75,7 @@ def mutacion (hijo):
     return hijo
 
 #Calcula el recorrido más fit (fittest) en cada generación
-def fit(fitness):
+def fitness():
     key = 100000
     fittest = 0
     for i in range(cant_poblacion):
@@ -127,6 +130,8 @@ def generar_nueva_poblacion(poblacion, fitness_poblacion, boolElitismo):
     return poblacion2
 
 def metodo_genetico(distancias, ciudades, boolElitismo):
+    if boolElitismo == True:
+        print("elitismo")
     print("hallo")
 
 padre1 = [9,8,2,1,7,4,5,10,6,3]
