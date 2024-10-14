@@ -11,6 +11,7 @@ maxiteraciones = 200
 poblacion = []
 cromosoma = []
 
+distancia_recorrido = [0] * cant_poblacion
 datos_valores = []
 datos_poblacionales = []
 maxCromosoma = []
