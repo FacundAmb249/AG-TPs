@@ -9,17 +9,21 @@ from mapa import ruta_mapa
 #python3 tp3.py -g  
 
 #Validacion de menu 
-if (sys.argv[1] != "-h" and sys.argv[1] != "-g") :
+def info():
     print("Opciones invalidas, ingrese alguna de las siguientes opciones")
-    print("python main.py -h -o : metodo heuristico con origen")
+    print("python main.py -h -co : metodo heuristico con origen")
     print("python main.py -h -so : metodo heuristico sin origen")
-    print("python main.py -g -o : metodo genetico")
+    print("python main.py -g -ce : metodo genetico con elitismo")
+    print("python main.py -g -se : metodo genetico sin elitismo")
     sys.exit(1)
+
+if (sys.argv[1] != "-h" and sys.argv[1] != "-g") :
+    info()
 
 ciudades, distancias = cargar_distancias()
 
 if sys.argv[1] == "-h":
-    if sys.argv[2] == "-o":
+    if sys.argv[2] == "-co":
         print("Ingrese el origen del recorrido, 0-23") 
         origen = int(input())
 
@@ -28,9 +32,19 @@ if sys.argv[1] == "-h":
     elif sys.argv[2] == "-so":
         recorrido, distancia = metodo_heuristico_sin_origen(distancias,ciudades)
 
+    else:
+        info()
 
 elif sys.argv[1] == "-g":
-    recorrido, distancia = metodo_genetico(distancias, ciudades)
+    if sys.argv[2] == "-ce":
+        recorrido, distancia = metodo_genetico(distancias, ciudades, True)
+    elif sys.argv[2] == "-se":
+        recorrido, distancia = metodo_genetico(distancias, ciudades, False)
+    else:
+        info()
+
+else:
+    info()
 
 ruta_mapa(recorrido)
 print(distancia)
