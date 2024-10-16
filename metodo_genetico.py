@@ -22,9 +22,17 @@ maxCromosoma = []
 #y cantidad de genes que van a tener los cromosomas
 
 def crear_poblacion(cant_poblacion, cant_genes):
-    for _ in range(cant_poblacion):
-        cromosoma = [random.randint(0, 1) for i in range(cant_genes)]
-        poblacion.append(cromosoma)
+    index_ciudades = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
+    for i in range(cant_poblacion):
+        cromosoma = [random.shuffle(index_ciudades)]
+        existe = False
+        for j in range(len(poblacion)):
+            if cromosoma == poblacion[j]:
+                existe = True
+        if existe:
+            i = i - 1
+        else:
+            poblacion.append(cromosoma)
     return poblacion
 
 def calcular_distancias(cant_poblacion, cant_genes, distancias):
