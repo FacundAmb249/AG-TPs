@@ -1,7 +1,6 @@
 import sys
 import random
 #Funciones obsoletas: generar_nueva_poblacion
-#Variables obsoletas: fitness_poblacion
 
 #VARIABLE INICIALES
 cant_poblacion = 50
@@ -14,6 +13,7 @@ poblacion = []
 cromosoma = []
 
 distancia_recorrido = [0] * cant_poblacion
+fitness_poblacion = [0] * cant_poblacion
 datos_valores = []
 datos_poblacionales = []
 maxCromosoma = []
@@ -33,6 +33,7 @@ def calcular_distancias(cant_poblacion, cant_genes, distancias):
         for j in range(cant_genes):
             dist = dist + distancias[poblacion[i][j]][poblacion[i][j + 1]]
         distancia_recorrido[i] = dist
+        fitness_poblacion[i] = 1 / dist
     return distancia_recorrido
 
 #Funcion que realiza el crossover entre dos cromosomas mediante el metodo de un punto de corte
@@ -75,25 +76,22 @@ def mutacion (hijo):
     return hijo
 
 #Calcula el recorrido más fit (fittest) en cada generación
-def fitness():
-    key = 100000
-    fittest = 0
-    for i in range(cant_poblacion):
-        if distancia_recorrido[i] < key:
-            key = distancia_recorrido[i]
-            fittest = i
-    return fittest
+#Busca el valor más bajo de distancia_recorrido y devuelve su índice
+def fittest(cant_poblacion, distancia_recorrido):
+    minimo = min(distancia_recorrido)
+    min_indice = distancia_recorrido.index(minimo)
+    return min_indice
 
 #Funcion que selecciona un cromosoma de la poblacion mediante el metodo de la ruleta
-def ruleta(fitness, poblacion):
+def ruleta(fitness_poblacion, poblacion):
     randomNum = random.random()
     acum = 0
     indiceCromosoma = 0
-    for i in range(len(fitness)):
-        if randomNum > acum and randomNum < (acum + fitness[i]):
+    for i in range(len(fitness_poblacion)):
+        if randomNum > acum and randomNum < (acum + fitness_poblacion[i]):
             indiceCromosoma = i
             break  
-        acum += fitness[i]
+        acum += fitness_poblacion[i]
     return poblacion[indiceCromosoma]
 
 #Funcion que selecciona los dos cromosomas/20% con mayor valor de la poblacion
