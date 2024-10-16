@@ -1,5 +1,6 @@
 import sys
 import random
+from distancias import cargar_distancias
 #Funciones obsoletas: generar_nueva_poblacion
 
 #VARIABLE INICIALES
@@ -21,28 +22,28 @@ maxCromosoma = []
 #Funcion que crea la poblacion inicial en base a la cantidad de poblacion inicial 
 #y cantidad de genes que van a tener los cromosomas
 
-def crear_poblacion(cant_poblacion, cant_genes):
-    index_ciudades = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
+ciudades, distancias = cargar_distancias()
+
+def crear_poblacion(cant_poblacion):
+    cromosoma = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
     for i in range(cant_poblacion):
-        cromosoma = [random.shuffle(index_ciudades)]
-        existe = False
-        for j in range(len(poblacion)):
-            if cromosoma == poblacion[j]:
-                existe = True
-        if existe:
+        random.shuffle(cromosoma)
+        temp = cromosoma.copy()
+        if temp not in poblacion: 
+            poblacion.append(temp)
+        else: 
             i = i - 1
-        else:
-            poblacion.append(cromosoma)
     return poblacion
 
 def calcular_distancias(cant_poblacion, cant_genes, distancias):
     for i in range(cant_poblacion):
         dist = 0
-        for j in range(cant_genes):
-            dist = dist + distancias[poblacion[i][j]][poblacion[i][j + 1]]
+        lista = poblacion[i]
+        for j in range(cant_genes - 1):
+            dist = dist + distancias[lista[j]][lista[j+1]]
         distancia_recorrido[i] = dist
         fitness_poblacion[i] = 1 / dist
-    return distancia_recorrido
+    return distancia_recorrido, fitness_poblacion
 
 #Funcion que realiza el crossover entre dos cromosomas mediante el metodo de un punto de corte
 def crossover_ciclico (padre1, padre2):
@@ -143,6 +144,13 @@ def metodo_genetico(distancias, ciudades, boolElitismo):
 padre1 = [9,8,2,1,7,4,5,10,6,3]
 padre2 = [1,2,3,4,5,6,7,8,9,10]
 hijo1,hijo2 = crossover_ciclico(padre1,padre2)
+poblacion = crear_poblacion(cant_poblacion)
+
+distancia_recorrido, fitness_poblacion = calcular_distancias(cant_poblacion, cant_genes, distancias)
+print("distancia_recorrido",distancia_recorrido)
+print("fitness_poblacion",fitness_poblacion)
+
+
 print("hijo1",hijo1)
 print("hijo2",hijo2)
 
