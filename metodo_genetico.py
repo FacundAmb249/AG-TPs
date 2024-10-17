@@ -30,36 +30,31 @@ def calcular_distancias(cant_poblacion, cant_genes, poblacion, distancias):
 
 #Funcion que realiza el crossover entre dos cromosomas mediante el metodo de un punto de corte
 def crossover_ciclico(padre1, padre2):
-    hijo1 = [-1] * len(padre2)
+    #Se asume que ambos padres tienen las mismas dimensiones
+    hijo1 = [-1] * len(padre1)
     hijo2 = [-1] * len(padre2)
 
     #Asigno los primeros valores de los hijos y agrego una variable para determinar el último valor encontrado
     hijo1[0] = padre1[0]
+    hijo2[0] = padre2[0]
     ultimo_encontrado = padre2[0]
+    length = 0
 
-    if ultimo_encontrado == padre1[0]:
-        #termina
-    else:
-        #sigue
-
-    index = 0
-    while padre2[index] not in hijo1: 
-        index = padre1.index(padre2[index])
-        hijo1[index] = padre1[index]
-
-    index2 = 0
-    while padre1[index2] not in hijo2:
-        hijo2[index2] = padre2[index2]
-        index2 = padre2.index(padre1[index2])
-
-    for i in range(len(padre1)):
-        if hijo1[i] == -1:
-            hijo1[i] = padre2[i]
-        if hijo2[i] == -1:
-            hijo2[i] = padre1[i]
-    #print("cruzado!")
-    print("hijo1", hijo1)
-    print("hijo2", hijo2)
+    while length < len(padre1):
+        if ultimo_encontrado == padre1[0]:
+            #termina
+            for i in range(len(padre1)):
+                if hijo1[i] == -1:
+                    hijo1[i] = padre2[i]
+                if hijo2[i] == -1:
+                    hijo2[i] = padre1[i]
+            length = len(padre1)
+        else:
+            indice = padre1.index(ultimo_encontrado)
+            hijo1[indice] = padre1[indice]
+            hijo2[indice] = padre2[indice]
+            ultimo_encontrado = padre2[indice]
+            length += 1
 
     return hijo1, hijo2
 
@@ -104,11 +99,11 @@ def generar_nueva_poblacion(poblacion, fitness_poblacion, probabilidad_crossover
     poblacion2 = [0] * len(poblacion)
     e = 0
 
-    #if boolElitismo:
-    #    cromosoma1, cromosoma2 = elitismo(poblacion, fitness_poblacion)
-    #    poblacion2.append(cromosoma1)
-    #    poblacion2.append(cromosoma2)
-    #    e = 1
+    if boolElitismo:
+        cromosoma1, cromosoma2 = elitismo(poblacion, fitness_poblacion)
+        poblacion2.append(cromosoma1)
+        poblacion2.append(cromosoma2)
+        e = 1
 
     for i in range(0, len(poblacion) - e, 2):
         padre1 = ruleta(fitness_poblacion, poblacion)
@@ -141,7 +136,7 @@ def metodo_genetico(distancias, ciudades, boolElitismo):
     distancia_recorrido, fitness_poblacion = calcular_distancias(cant_poblacion, cant_genes, poblacion, distancias)
 
     for i in range(maxiteraciones):
-        print("iteracion:", i)
+        print("iteracion:", i + 1)
         poblacion = generar_nueva_poblacion(poblacion, fitness_poblacion, probabilidad_crossover, boolElitismo)
 
         for j in range(cant_poblacion):
@@ -157,8 +152,10 @@ def metodo_genetico(distancias, ciudades, boolElitismo):
         if (i == 0) or (temp_min_d < distancia_menor):
             distancia_menor = temp_min_d
             distancia_menor_i = temp_min_i
+        print("actual:", temp_min_d, temp_min_i)
+        print("mejor:", distancia_menor, distancia_menor_i)
         
     recorrido = poblacion[distancia_menor_i]
     distancia = distancia_recorrido[distancia_menor_i]
     return recorrido, distancia
-        
+print(crossover_ciclico([1,2,3,4,5,6,7,8],[8,5,2,1,3,6,4,7]))
