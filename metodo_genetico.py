@@ -4,8 +4,9 @@ from distancias import cargar_distancias
 
 #Funcion que crea la poblacion inicial en base a la cantidad de poblacion inicial y cantidad de genes que van a tener los cromosomas
 
-def crear_poblacion(cant_poblacion):
-    cromosoma = list(range(cant_poblacion))
+def crear_poblacion(cant_poblacion, cant_genes):
+    cromosoma = list(range(cant_genes))
+    poblacion = [] * cant_poblacion
     for i in range(cant_poblacion):
         random.shuffle(cromosoma)
         temp = cromosoma.copy()
@@ -18,6 +19,8 @@ def crear_poblacion(cant_poblacion):
 def calcular_distancias(cant_poblacion, cant_genes, poblacion, distancias):
     for i in range(cant_poblacion):
         dist = 0
+        distancia_recorrido = [0] * cant_poblacion
+        fitness_poblacion = [0] * cant_poblacion
         lista = poblacion[i]
         for j in range(cant_genes - 1):
             dist = dist + distancias[lista[j]][lista[j+1]]
@@ -26,9 +29,9 @@ def calcular_distancias(cant_poblacion, cant_genes, poblacion, distancias):
     return distancia_recorrido, fitness_poblacion
 
 #Funcion que realiza el crossover entre dos cromosomas mediante el metodo de un punto de corte
-def crossover_ciclico(padre1, padre2):
-    num = random.randrange(0,100)
-    if num > (probabilidad_crossover*100):
+def crossover_ciclico(probabilidad_crossover, padre1, padre2):
+    randomNum = random.random()
+    if randomNum > probabilidad_crossover:
         hijo1 = padre1
         hijo2 = padre2
     else:
@@ -58,9 +61,11 @@ def crossover_ciclico(padre1, padre2):
     return hijo1, hijo2
 
 #Funcion que realiza la mutacion de un cromosoma, inverte dos cromosomas random de lugar
-def mutacion(hijo): 
-    index = random.sample(hijo,2)
-    hijo[index[0]], hijo[index[1]] = hijo[index[1]], hijo[index[0]]
+def mutacion(probabilidad_mutacion, hijo): 
+    randomNum = random.random()
+    if randomNum < probabilidad_mutacion:
+        index = random.sample(hijo,2)
+        hijo[index[0]], hijo[index[1]] = hijo[index[1]], hijo[index[0]]
     return hijo
 
 #Funcion que selecciona un cromosoma de la poblacion mediante el metodo de la ruleta
@@ -76,7 +81,7 @@ def ruleta(fitness_poblacion, poblacion):
     return poblacion[indiceCromosoma]
 
 #Funcion que selecciona los dos cromosomas/20% con mayor valor de la poblacion
-def elitismo(poblacion,fitness_poblacion):
+def elitismo(poblacion, fitness_poblacion):
     #Obtengo los dos cromosomas con mayor valor
     fitness_acomodado = sorted(fitness_poblacion,reverse=True)
     maximos = fitness_acomodado[:2]
@@ -89,24 +94,33 @@ def elitismo(poblacion,fitness_poblacion):
     return cromosoma1, cromosoma2
 
 #Funcion que genera una nueva poblacion en base a la poblacion anterior y sus fitness aplicando o no elitismo y ruleta o torneo
-def generar_nueva_poblacion(poblacion, fitness_poblacion, probabilidad_crossover):
+def generar_nueva_poblacion(poblacion, fitness_poblacion, probabilidad_crossover, boolElitismo):
     global cant_poblacion
-    poblacion2 = [] * len(poblacion)
-    for i in range(0, len(poblacion), 2):
+    poblacion2 = [0] * len(poblacion)
+    e = 0
+
+    if boolElitismo:
+        cromosoma1, cromosoma2 = elitismo(poblacion, fitness_poblacion)
+        poblacion2.append(cromosoma1)
+        poblacion2.append(cromosoma2)
+        e = 1
+
+    for i in range(0, len(poblacion) - e, 2):
         padre1 = ruleta(fitness_poblacion, poblacion)
         padre2 = ruleta(fitness_poblacion, poblacion)
         while padre1 == padre2:
             padre2 = ruleta(fitness_poblacion, poblacion)
-        randomNum = random.random()
-        if randomNum < probabilidad_crossover:
-            hijo1, hijo2 = crossover_ciclico(padre1, padre2)
+        print(padre1)
+        print(padre2)
+        hijo1, hijo2 = crossover_ciclico(probabilidad_crossover, padre1, padre2)
+        print(i)
         poblacion2[i] = hijo1
         poblacion2[i + 1] = hijo2
+        print(poblacion2)
+
     return poblacion2
 
 def metodo_genetico(distancias, ciudades, boolElitismo):
-    if boolElitismo == True:
-        print("elitismo")
     #VARIABLE INICIALES
     cant_poblacion = 50
     cant_genes = 24
@@ -114,29 +128,23 @@ def metodo_genetico(distancias, ciudades, boolElitismo):
     probabilidad_mutacion = 0.2
     maxiteraciones = 200
 
-    poblacion = []
     distancia_menor = 0
 
-    distancia_recorrido = [0] * cant_poblacion
-    fitness_poblacion = [0] * cant_poblacion
-
-    poblacion = crear_poblacion(cant_poblacion)
+    poblacion = crear_poblacion(cant_poblacion, cant_genes)
     distancia_recorrido, fitness_poblacion = calcular_distancias(cant_poblacion, cant_genes, poblacion, distancias)
 
     for i in range(maxiteraciones):
-        poblacion = generar_nueva_poblacion(poblacion, fitness_poblacion, probabilidad_crossover)
+        poblacion = generar_nueva_poblacion(poblacion, fitness_poblacion, probabilidad_crossover, boolElitismo)
 
         for j in range(cant_poblacion):
-            randomNum = random.random()
-            if randomNum < probabilidad_mutacion:
-                poblacion[j] = mutacion(poblacion[j])
+            poblacion[j] = mutacion(probabilidad_mutacion, poblacion[j])
         
         distancia_recorrido, fitness_poblacion = calcular_distancias(cant_poblacion, cant_genes, poblacion, distancias)
 
         temp_min_d = min(distancia_recorrido)
         temp_min_i = distancia_recorrido.index(temp_min_d)
 
-        if (i = 0) or (temp_min_d < distancia_menor):
+        if (i == 0) or (temp_min_d < distancia_menor):
             distancia_menor = temp_min_d
             distancia_menor_i = temp_min_i
         
