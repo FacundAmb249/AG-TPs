@@ -5,7 +5,7 @@ from distancias import cargar_distancias
 #Funcion que crea la poblacion inicial en base a la cantidad de poblacion inicial y cantidad de genes que van a tener los cromosomas
 
 def crear_poblacion(cant_poblacion):
-    cromosoma = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
+    cromosoma = list(range(cant_poblacion))
     for i in range(cant_poblacion):
         random.shuffle(cromosoma)
         temp = cromosoma.copy()
@@ -15,7 +15,7 @@ def crear_poblacion(cant_poblacion):
             i = i - 1
     return poblacion
 
-def calcular_distancias(cant_poblacion, cant_genes, distancias):
+def calcular_distancias(cant_poblacion, cant_genes, poblacion, distancias):
     for i in range(cant_poblacion):
         dist = 0
         lista = poblacion[i]
@@ -26,7 +26,7 @@ def calcular_distancias(cant_poblacion, cant_genes, distancias):
     return distancia_recorrido, fitness_poblacion
 
 #Funcion que realiza el crossover entre dos cromosomas mediante el metodo de un punto de corte
-def crossover_ciclico (padre1, padre2):
+def crossover_ciclico(padre1, padre2):
     num = random.randrange(0,100)
     if num > (probabilidad_crossover*100):
         hijo1 = padre1
@@ -58,17 +58,10 @@ def crossover_ciclico (padre1, padre2):
     return hijo1, hijo2
 
 #Funcion que realiza la mutacion de un cromosoma, inverte dos cromosomas random de lugar
-def mutacion (hijo): 
+def mutacion(hijo): 
     index = random.sample(hijo,2)
     hijo[index[0]], hijo[index[1]] = hijo[index[1]], hijo[index[0]]
     return hijo
-
-#Calcula el recorrido más fit (fittest) en cada generación
-#Busca el valor más bajo de distancia_recorrido y devuelve su índice
-def fittest(cant_poblacion, distancia_recorrido):
-    minimo = min(distancia_recorrido)
-    min_indice = distancia_recorrido.index(minimo)
-    return min_indice
 
 #Funcion que selecciona un cromosoma de la poblacion mediante el metodo de la ruleta
 def ruleta(fitness_poblacion, poblacion):
@@ -96,7 +89,7 @@ def elitismo(poblacion,fitness_poblacion):
     return cromosoma1, cromosoma2
 
 #Funcion que genera una nueva poblacion en base a la poblacion anterior y sus fitness aplicando o no elitismo y ruleta o torneo
-def generar_nueva_poblacion(poblacion, fitness_poblacion):
+def generar_nueva_poblacion(poblacion, fitness_poblacion, probabilidad_crossover):
     global cant_poblacion
     poblacion2 = [] * len(poblacion)
     for i in range(0, len(poblacion), 2):
@@ -104,7 +97,9 @@ def generar_nueva_poblacion(poblacion, fitness_poblacion):
         padre2 = ruleta(fitness_poblacion, poblacion)
         while padre1 == padre2:
             padre2 = ruleta(fitness_poblacion, poblacion)
-        hijo1, hijo2 = crossover_ciclico(padre1, padre2)
+        randomNum = random.random()
+        if randomNum < probabilidad_crossover:
+            hijo1, hijo2 = crossover_ciclico(padre1, padre2)
         poblacion2[i] = hijo1
         poblacion2[i + 1] = hijo2
     return poblacion2
@@ -120,15 +115,32 @@ def metodo_genetico(distancias, ciudades, boolElitismo):
     maxiteraciones = 200
 
     poblacion = []
+    distancia_menor = 0
 
     distancia_recorrido = [0] * cant_poblacion
     fitness_poblacion = [0] * cant_poblacion
-    datos_valores = []
-    datos_poblacionales = []
-    maxCromosoma = []
 
     poblacion = crear_poblacion(cant_poblacion)
-    distancia_recorrido, fitness_poblacion = calcular_distancias(cant_poblacion, cant_genes, distancias)
+    distancia_recorrido, fitness_poblacion = calcular_distancias(cant_poblacion, cant_genes, poblacion, distancias)
 
     for i in range(maxiteraciones):
-        poblacion = generar_nueva_poblacion(poblacion, fitness_poblacion)
+        poblacion = generar_nueva_poblacion(poblacion, fitness_poblacion, probabilidad_crossover)
+
+        for j in range(cant_poblacion):
+            randomNum = random.random()
+            if randomNum < probabilidad_mutacion:
+                poblacion[j] = mutacion(poblacion[j])
+        
+        distancia_recorrido, fitness_poblacion = calcular_distancias(cant_poblacion, cant_genes, poblacion, distancias)
+
+        temp_min_d = min(distancia_recorrido)
+        temp_min_i = distancia_recorrido.index(temp_min_d)
+
+        if (i = 0) or (temp_min_d < distancia_menor):
+            distancia_menor = temp_min_d
+            distancia_menor_i = temp_min_i
+        
+    recorrido = poblacion[distancia_menor_i]
+    distancia = distancia_recorrido[distancia_menor_i]
+    return recorrido, distancia
+        
