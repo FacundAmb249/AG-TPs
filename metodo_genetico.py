@@ -17,10 +17,10 @@ def crear_poblacion(cant_poblacion, cant_genes):
     return poblacion
 
 def calcular_distancias(cant_poblacion, cant_genes, poblacion, distancias):
+    distancia_recorrido = [0] * cant_poblacion
+    fitness_poblacion = [0] * cant_poblacion
     for i in range(cant_poblacion):
         dist = 0
-        distancia_recorrido = [0] * cant_poblacion
-        fitness_poblacion = [0] * cant_poblacion
         lista = poblacion[i]
         for j in range(cant_genes - 1):
             dist = dist + distancias[lista[j]][lista[j+1]]
@@ -70,14 +70,21 @@ def mutacion(probabilidad_mutacion, hijo):
 
 #Funcion que selecciona un cromosoma de la poblacion mediante el metodo de la ruleta
 def ruleta(fitness_poblacion, poblacion):
-    randomNum = random.random()
-    acum = 0
+    acum1 = 0
+    acum2 = 0
     indiceCromosoma = 0
     for i in range(len(fitness_poblacion)):
-        if randomNum > acum and randomNum < (acum + fitness_poblacion[i]):
-            indiceCromosoma = i
-            break  
-        acum += fitness_poblacion[i]
+        acum1 += fitness_poblacion[i]
+    print("acum1", acum1)
+    randomNum = random.uniform(0, acum1)
+    for i in range(len(fitness_poblacion)):
+        if randomNum > acum2:
+            indiceCromosoma += 1
+            acum2 += fitness_poblacion[i]
+    if indiceCromosoma == len(fitness_poblacion):
+        indiceCromosoma = len(fitness_poblacion) - 1 
+    print("acum2", acum2)
+    print("indiceCromosoma", indiceCromosoma)
     return poblacion[indiceCromosoma]
 
 #Funcion que selecciona los dos cromosomas/20% con mayor valor de la poblacion
@@ -110,13 +117,9 @@ def generar_nueva_poblacion(poblacion, fitness_poblacion, probabilidad_crossover
         padre2 = ruleta(fitness_poblacion, poblacion)
         while padre1 == padre2:
             padre2 = ruleta(fitness_poblacion, poblacion)
-        print(padre1)
-        print(padre2)
         hijo1, hijo2 = crossover_ciclico(probabilidad_crossover, padre1, padre2)
-        print(i)
         poblacion2[i] = hijo1
         poblacion2[i + 1] = hijo2
-        print(poblacion2)
 
     return poblacion2
 
@@ -134,6 +137,7 @@ def metodo_genetico(distancias, ciudades, boolElitismo):
     distancia_recorrido, fitness_poblacion = calcular_distancias(cant_poblacion, cant_genes, poblacion, distancias)
 
     for i in range(maxiteraciones):
+        print("iteracion:", i)
         poblacion = generar_nueva_poblacion(poblacion, fitness_poblacion, probabilidad_crossover, boolElitismo)
 
         for j in range(cant_poblacion):
