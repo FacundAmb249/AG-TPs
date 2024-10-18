@@ -152,10 +152,9 @@ def metodo_genetico(distancias, ciudades, boolElitismo):
         if (i == 0) or (temp_min_d < distancia_menor):
             distancia_menor = temp_min_d
             distancia_menor_i = temp_min_i
-        print("actual:", temp_min_d, temp_min_i)
-        print("mejor:", distancia_menor, distancia_menor_i)
+            recorrido = poblacion[distancia_menor_i]
+        #print("actual:", temp_min_d, temp_min_i)
+        #print("mejor:", distancia_menor, distancia_menor_i)
+        #print("recorrido:", recorrido)
         
-    recorrido = poblacion[distancia_menor_i]
-    distancia = distancia_recorrido[distancia_menor_i]
-    return recorrido, distancia
-print(crossover_ciclico([1,2,3,4,5,6,7,8],[8,5,2,1,3,6,4,7]))
+    return recorrido, distancia_menor
